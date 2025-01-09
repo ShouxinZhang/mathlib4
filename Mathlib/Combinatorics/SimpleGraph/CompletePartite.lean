@@ -1,8 +1,37 @@
+/-
+Copyright (c) 2024 John Talbot and Lian Bremner Tattersall. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: John Talbot, Lian Bremner Tattersall
+-/
 import Mathlib.Order.Partition.Finpartition
 import Mathlib.Combinatorics.SimpleGraph.Maps
 import Mathlib.Combinatorics.SimpleGraph.Partition
---import UCL2024.Projects.Combinatorics.AES_Brandt.Misc
 
+/-!
+# Complete Multi-Partite Graphs
+
+A graph is complete (multi)-partite iff non-adjacency is transitive.
+
+## Main declarations
+
+* `SimpleGraph.IsCompletePartite`: predicate for a graph to be complete-partite.
+
+* `SimpleGraph.IsCompletePartite.setoid`: the Setoid given by non-adjacency.
+
+* `SimpleGraph.IsCompletePartite.partition`: the Partition into independent sets
+
+For finite vertex types:
+
+* `SimpleGraph.IsCompletePartite.finpartition`: the Finpartition.
+
+* `SimpleGraph.IsCompletePartite.card`: the number of parts in the Finpartition.
+
+* `SimpleGraph.IsCompletePartite.coloring`: the coloring by parts.
+
+* `SimpleGraph.IsCompletePartite.IsP2Compl`: predicate for a witness to non-complete-partiteness.
+  i.e. v w₁ w₂ such that v is not adjacent to w₁ or w₂ but w₁ and w₂ are adjacent.
+
+-/
 namespace SimpleGraph
 variable {α : Type*} {G : SimpleGraph α}
 
@@ -25,10 +54,6 @@ lemma equivalence  : Equivalence (¬G.Adj · · ):=by
   · apply h
 
 def setoid : Setoid α := ⟨_, h.equivalence⟩
-variable [DecidableRel G.Adj]
-
-instance : DecidableRel h.setoid.r :=
-  inferInstanceAs <| DecidableRel (¬G.Adj · ·)
 
 /-- The partition into independent sets -/
 def partition : G.Partition where
@@ -40,37 +65,40 @@ def partition : G.Partition where
     apply h.setoid.rel_iff_exists_classes.2
     use s
 
-variable [Fintype α] [DecidableEq α]
+variable [Fintype α] [DecidableEq α] [DecidableRel G.Adj]
+
+instance : DecidableRel h.setoid.r :=
+  inferInstanceAs <| DecidableRel (¬G.Adj · ·)
 
 /-- The finpartition given by non-adjacency. -/
-def fp : Finpartition (Finset.univ : Finset α):=
+def finpartition : Finpartition (Finset.univ : Finset α):=
   Finpartition.ofSetoid h.setoid
 
 /-- the number of parts in a complete partite graph -/
-abbrev card : ℕ := h.fp.parts.card
-
-/-- If there are any vertices then the number of parts is positive -/
-lemma card_pos [Nonempty α] : 0 < h.card:= by
-  rw [Finset.card_pos,h.fp.parts_nonempty_iff,Finset.bot_eq_empty,ne_eq,Finset.univ_eq_empty_iff]
-  simp
+abbrev card : ℕ := h.finpartition.parts.card
 
 open Finset
+/-- If there are any vertices then the number of parts is positive -/
+lemma card_pos [Nonempty α] : 0 < h.card:= by
+  rw [Finset.card_pos,h.finpartition.parts_nonempty_iff,bot_eq_empty,ne_eq,univ_eq_empty_iff]
+  simp
+
 variable {x y : α}
 /-- Vertices are not adjacent iff they lie in the same part -/
 lemma not_adj_iff_parts_eq :
-    ¬G.Adj x y ↔ h.fp.part x = h.fp.part y := by
+    ¬G.Adj x y ↔ h.finpartition.part x = h.finpartition.part y := by
   change h.setoid.r x y ↔ _
   rw [← Finpartition.mem_part_ofSetoid_iff_rel]
-  change y ∈ h.fp.part x ↔ h.fp.part x = h.fp.part y
-  rw [h.fp.mem_part_iff_part_eq_part (mem_univ _) (mem_univ _), eq_comm]
+  change y ∈ h.finpartition.part x ↔ h.finpartition.part x = h.finpartition.part y
+  rw [h.finpartition.mem_part_iff_part_eq_part (mem_univ _) (mem_univ _), eq_comm]
 
 /-- Vertices are adjacent iff they lie in different parts -/
-lemma adj_iff_parts_ne  :  G.Adj x y ↔ h.fp.part x ≠ h.fp.part y:=by
+lemma adj_iff_parts_ne  :  G.Adj x y ↔ h.finpartition.part x ≠ h.finpartition.part y:=by
   rw [← not_iff_not, not_not, h.not_adj_iff_parts_eq]
 
 variable {t : Finset α}
 /-- Any choice of vertices from distinct parts forms a clique -/
-lemma injOn_isClique (ht : Set.InjOn h.fp.part t) : G.IsClique t:=by
+lemma injOn_isClique (ht : Set.InjOn h.finpartition.part t) : G.IsClique t:=by
   intro i hi j hj hne
   apply h.adj_iff_parts_ne.2
   intro hne1
@@ -79,7 +107,7 @@ lemma injOn_isClique (ht : Set.InjOn h.fp.part t) : G.IsClique t:=by
 
 /-- A complete r-partite graph contains Kᵣ -/
 lemma exists_card_isNClique : ∃ (s : Finset α), G.IsNClique h.card s:=by
-  obtain ⟨s,hs⟩:=h.fp.exists_subset_part_bijOn
+  obtain ⟨s,hs⟩:=h.finpartition.exists_subset_part_bijOn
   use s,h.injOn_isClique hs.2.2.1, card_nbij _ hs.2.1 hs.2.2.1 hs.2.2.2
 
 /-- If G is complete-r-partite then it is not Kᵣ-free -/
@@ -95,8 +123,8 @@ lemma card_lt_of_cliqueFree (hc : G.CliqueFree n) : h.card < n :=by
   apply h.not_cliqueFree <| hf.mono hc
 
 /-- A coloring by parts-/
-def coloring : G.Coloring h.fp.parts :=
-  Coloring.mk (fun v ↦ ⟨h.fp.part v,h.fp.part_mem (mem_univ _) ⟩) fun hadj ↦ by
+def coloring : G.Coloring h.finpartition.parts :=
+  Coloring.mk (fun v ↦ ⟨h.finpartition.part v,h.finpartition.part_mem (mem_univ _) ⟩) fun hadj ↦ by
     rw [Ne, Subtype.mk_eq_mk]
     intro heq
     exact h.not_adj_iff_parts_eq.2 heq hadj
@@ -124,7 +152,7 @@ lemma chromaticNumber : G.chromaticNumber = h.card := by
 
 end IsCompletePartite
 
- /--
+/--
 P2Compl is the graph on 3 vertices with one edge. It is a witness to non-complete-partiteness
 -/
 structure IsP2Compl (v w₁ w₂ : α): Prop where

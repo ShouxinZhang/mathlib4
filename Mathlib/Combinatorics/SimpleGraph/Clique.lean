@@ -366,7 +366,7 @@ theorem cliqueFree_bot (h : 2 ≤ n) : (⊥ : SimpleGraph α).CliqueFree n := by
 
 lemma isEmpty_of_cliqueFree_one (h : G.CliqueFree 1) : IsEmpty α:=by
   simp only [CliqueFree, isNClique_one, not_exists, forall_eq_apply_imp_iff] at h
-  tauto
+  exact { false := h }
 
 theorem CliqueFree.mono (h : m ≤ n) : G.CliqueFree m → G.CliqueFree n := by
   intro hG s hs
@@ -759,6 +759,5 @@ lemma MaxCliqueFree.exists_of_not_adj (h: G.MaxCliqueFree (n + 1)) (hne: x ≠ y
   exact ⟨(edge_comm ▸ hc).erase_of_sup_edge_of_mem xym.2,hc.erase_of_sup_edge_of_mem xym.1⟩
 
 end MaxCliqueFree
-
 
 end SimpleGraph

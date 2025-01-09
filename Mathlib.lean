@@ -2266,8 +2266,8 @@ import Mathlib.Combinatorics.SetFamily.KruskalKatona
 import Mathlib.Combinatorics.SetFamily.LYM
 import Mathlib.Combinatorics.SetFamily.Shadow
 import Mathlib.Combinatorics.SetFamily.Shatter
-import Mathlib.Combinatorics.SimpleGraph.AES.AES
-import Mathlib.Combinatorics.SimpleGraph.AES.Wheel
+import Mathlib.Combinatorics.SimpleGraph.AndrasfaiErdosSos.AES
+import Mathlib.Combinatorics.SimpleGraph.AndrasfaiErdosSos.Wheel
 import Mathlib.Combinatorics.SimpleGraph.Acyclic
 import Mathlib.Combinatorics.SimpleGraph.AdjMatrix
 import Mathlib.Combinatorics.SimpleGraph.Basic

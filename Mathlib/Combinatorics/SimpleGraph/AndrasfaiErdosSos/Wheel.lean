@@ -1,10 +1,33 @@
+/-
+Copyright (c) 2024 John Talbot and Lian Bremner Tattersall. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: John Talbot, Lian Bremner Tattersall
+-/
 import Mathlib.Combinatorics.SimpleGraph.Clique
 import Mathlib.Combinatorics.SimpleGraph.CompletePartite
+
+/-!
+If G is maximally Kᵣ₊₂-free and xy is a non-edge xy then there exists an r-set such that
+s ∪ {x} and s ∪ {y} are r + 1 cliques.
+
+If G is not complete-partite graph then it contains an edge w₁w₂ and a vertex v such that vw₁ and
+vw₂ are non-edges. We call this three vertex graph with a single edge a `P₂-complement`.
+
+Putting these together gives the definition of a wheel-like subgraph which can be found in any
+maximally Kᵣ₊₂-free graph that is not complete-partite.
+
+Wheel-like subgraphs plays a key role in Brandt's proof of the Andrásfai-Erdős-Sós theorem.
+
+Main definition:
+
+* `SimpleGraph.AES.IsWheel`: predicate for v w₁ w₂ s t to form a wheel-like subgraph of G with
+r-sets s and t, and vertices v w₁ w₂ forming a P₂-complement.
+-/
 
 open Finset
 variable {α : Type*}[DecidableEq α]
 /-- Useful trivial fact about when |{a,b,c,d}| ≤ 2 given a ≠ b , a ≠ d, b ≠ c  -/
-lemma Finset.card_le_two_of_four {a b c d : α} (hab : a ≠ b) (had : a ≠ d) (hbc : b ≠ c)
+private lemma card_le_two_of_four {a b c d : α} (hab : a ≠ b) (had : a ≠ d) (hbc : b ≠ c)
 (hc2: #{a,b,c,d} ≤ 2): c = a ∧ d = b:=by
   by_contra! hf
   apply (#{a, b, c, d}).le_lt_asymm hc2 <| two_lt_card_iff.2 _
@@ -18,9 +41,9 @@ variable (G : SimpleGraph α) {r : ℕ }
 /-- A IsWheel r structure in G is 3 vertices and two r-sets such that... -/
 structure IsWheel (r : ℕ) (v w₁ w₂ : α) (s t : Finset α) : Prop where
   IsP2Compl : G.IsP2Compl v w₁ w₂ -- w₁w₂ ∈ E(G) but vw₁,vw₂ ∉ E(G)
-  disj : v ∉ s ∧ v ∉ t ∧ w₁ ∉ s ∧ w₂ ∉ t
-  cliques : G.IsNClique (r + 1) (insert v s) ∧ G.IsNClique (r + 1) (insert w₁ s)
-          ∧ G.IsNClique (r + 1) (insert v t) ∧ G.IsNClique (r + 1) (insert w₂ t)
+  disj      : v ∉ s ∧ v ∉ t ∧ w₁ ∉ s ∧ w₂ ∉ t
+  cliques   : G.IsNClique (r + 1) (insert v s) ∧ G.IsNClique (r + 1) (insert w₁ s)
+              ∧ G.IsNClique (r + 1) (insert v t) ∧ G.IsNClique (r + 1) (insert w₂ t)
 
 variable {G}
 /-- If G contains a IsP2Compl and is maximal Kᵣ₊₂-free then we have a wheel like graph -/
@@ -287,5 +310,4 @@ lemma three_le_nonadj (hmcf : G.MaxCliqueFree (r + 2)) (hWc: ∀ {y}, y ∈ s �
     apply not_mem_mono <| inter_subset_right
     exact hw1
 
-end IsWheel
-end SimpleGraph
+end SimpleGraph.IsWheel

@@ -1,11 +1,34 @@
-import Mathlib.Combinatorics.SimpleGraph.AES.Wheel
+/-
+Copyright (c) 2024 John Talbot and Lian Bremner Tattersall. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: John Talbot, Lian Bremner Tattersall
+-/
+import Mathlib.Combinatorics.SimpleGraph.AndrasfaiErdosSos.Wheel
 import Mathlib.Combinatorics.SimpleGraph.Coloring
 import Mathlib.Algebra.BigOperators.Ring
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
-import Mathlib.Tactic
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Ring
+/-!
+
+# Andrasfai-Erdos-Sos Theorem:
+
+We prove the Andrásfai-Erdős-Sós theorem: `colorable_of_cliqueFree_minDegree_gt`
+
+If G is Kᵣ₊₁-free and δ(G) > (3r - 4)n/(3r - 1) then G is (r + 1)-colorable.
+
+## References
+
+  B. Andrasfái, P Erdős, V. T. Sós
+  **On the connection between chromatic number, maximal clique size, and minimal degree of a graph**
+  https://doi.org/10.1016/0012-365X(74)90133-2
+
+  S. Brandt **The structure graphs with bounded clique number**
+  https://doi.org/10.1007/s00493-003-0042-z
+
+-/
 local notation "‖" x "‖" => Fintype.card x
-namespace SimpleGraph
-namespace AES
+namespace SimpleGraph.AES
 variable {k r n i j: ℕ}
 lemma kr_bound (hk: k ≤ r) :
     (2 * r + 2 + k) * n / (2 * r + 2 + k + 3) ≤ (3 * r + 2) *n / (3 * r + 5):=by
@@ -26,7 +49,7 @@ lemma card_adj_of_card_non_adj {s : Finset α} (hx: i ≤ #(s.filter fun z ↦ �
 
 variable [Fintype α] [DecidableEq α] {W X : Finset α}
 /-- Given lower bounds on non-degrees from W into X and into α we can bound degrees over W-/
-lemma deg_bound (hx : ∀ x, x ∈ X → i  ≤ #(W.filter fun z ↦ ¬ G.Adj x z))
+lemma sum_degree_le_of_le_non_adj (hx : ∀ x, x ∈ X → i  ≤ #(W.filter fun z ↦ ¬ G.Adj x z))
 (hy : ∀ y, j ≤ #(W.filter fun z ↦ ¬ G.Adj y z)) :
     ∑ w ∈ W, G.degree w ≤ #X * (#W - i) + #Xᶜ * (#W - j) :=calc
    _ = ∑ v, #(G.neighborFinset v ∩ W) := by
@@ -44,7 +67,7 @@ open Classical in
 /-- **Andrasfai-Erdos-Sos**
 If G is Kᵣ₊₁-free and δ(G) > (3r - 4)n/(3r - 1) then G is (r + 1)-colorable
 e.g. K₃-free and δ(G) > 2n/5 then G is 2-colorable -/
-theorem _root_.SimpleGraph.colorable_of_cliqueFree_minDegree (hf: G.CliqueFree (r + 1))
+theorem _root_.SimpleGraph.colorable_of_cliqueFree_minDegree_gt (hf: G.CliqueFree (r + 1))
     (hd : (3 * r - 4) * ‖α‖ / (3 * r - 1) < G.minDegree) : G.Colorable r:= by
   cases r with
   | zero => exact colorable_of_cliqueFree_one hf
@@ -72,7 +95,7 @@ theorem _root_.SimpleGraph.colorable_of_cliqueFree_minDegree (hf: G.CliqueFree (
 -- Any vertex in α has at least 1 non-neighbor in W
 -- So we have a bound on the degree sum over W
 -- ∑ w in W, degree H w ≤  |X| * (|W| - 3) + |Xᶜ| * (|W| - 1)
-  have boundW :=deg_bound dXle <| hw.one_le_non_adj hmcf.1
+  have boundW :=sum_degree_le_of_le_non_adj dXle <| hw.one_le_non_adj hmcf.1
 -- Since X consists of all vertices adjacent to all of s ∩ t, so x ∈ Xᶜ → x
 -- has at least one non-neighbour in X
   have xcle: ∀ x, x ∈ Xᶜ → 1 ≤ #((s ∩ t).filter fun z ↦ ¬ H.Adj  x z):= by
@@ -85,7 +108,7 @@ theorem _root_.SimpleGraph.colorable_of_cliqueFree_minDegree (hf: G.CliqueFree (
     exact ⟨_,mem_filter.2 hy⟩
 -- So we also have a bound on degree sum over s ∩ t
 -- ∑ w in s ∩ t, degree H w ≤  |Xᶜ| * (|s ∩ t| - 1) + |X| * |s ∩ t|
-  have boundX := deg_bound xcle (fun x ↦ Nat.zero_le _)
+  have boundX := sum_degree_le_of_le_non_adj xcle (fun x ↦ Nat.zero_le _)
   rw [compl_compl,tsub_zero,add_comm] at boundX
   let k := #(s ∩ t)
 -- Now just some inequalities...
@@ -121,19 +144,17 @@ theorem _root_.SimpleGraph.colorable_of_cliqueFree_minDegree (hf: G.CliqueFree (
     calc
     minDegree H * (2 * r + k + 3) ≤  ∑ w ∈ W, H.degree w +  2 * ∑ w ∈ s ∩ t, H.degree w :=by
         rw [add_assoc,add_comm k,← add_assoc,← Wc,add_assoc,←two_mul,mul_add]
-        dsimp [k]
-        rw [card_eq_sum_ones,card_eq_sum_ones,←mul_assoc,mul_sum,mul_sum,mul_one,mul_one,mul_sum]
-        apply add_le_add <;> apply sum_le_sum <;> intro i _;
+        simp_rw [k,card_eq_sum_ones,←mul_assoc,mul_sum,mul_one]
+        apply add_le_add <;> apply sum_le_sum <;> intro i _
         · apply minDegree_le_degree
-        · rw [mul_comm]; apply Nat.mul_le_mul_left ;apply minDegree_le_degree
+        · rw [mul_comm]; apply Nat.mul_le_mul_left; apply minDegree_le_degree
     _ ≤ #X * (#W - 3) + #Xᶜ * (#W - 1) + 2 * (#X * k + #Xᶜ * (k - 1)) :=by
         apply add_le_add boundW <| Nat.mul_le_mul_left _ boundX
-    _ = #X * (#W - 3 + 2 * k) + #Xᶜ * ((#W - 1) + 2 * (k - 1)) :=by ring
+    _ = #X * (#W - 3 + 2 * k) + #Xᶜ * ((#W - 1) + 2 * (k - 1)) :=by ring_nf
     _ ≤ (2 * r + k) * ‖α‖:=by
         rw [hap, ←add_mul,card_compl,add_tsub_cancel_of_le (card_le_univ _),mul_comm]
         apply Nat.mul_le_mul_right
         rw [two_mul,← add_assoc]; apply Nat.add_le_add_right
         rw [tsub_add_eq_add_tsub w3, Wc] ; apply add_tsub_le_right
 
-end AES
-end SimpleGraph
+end SimpleGraph.AES
