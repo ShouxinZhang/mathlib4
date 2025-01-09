@@ -86,7 +86,7 @@ theorem _root_.SimpleGraph.colorable_of_cliqueFree_minDegree_gt (hf: G.CliqueFre
 -- neighbours of all of s ∩ t
   let X := {x | ∀ {y}, y ∈ s ∩ t → H.Adj x y}.toFinset
 -- and W which is simply all the vertices of the wheel
-  let W := hw.verts
+  let W := insert v (insert w₁ (insert w₂ (s ∪ t))) -- the vertices of the wheel
 -- Any vertex in X has at least 3 non-neighbors in W (otherwise we can build a bigger wheel)
   have dXle: ∀ x, x ∈ X → 3 ≤ #(W.filter fun z ↦ ¬ H.Adj  x z):= by
     intro z hx;

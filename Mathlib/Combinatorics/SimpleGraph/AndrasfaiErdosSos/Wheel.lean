@@ -46,6 +46,7 @@ structure IsWheel (r : ℕ) (v w₁ w₂ : α) (s t : Finset α) : Prop where
               ∧ G.IsNClique (r + 1) (insert v t) ∧ G.IsNClique (r + 1) (insert w₂ t)
 
 variable {G}
+
 /-- If G contains a IsP2Compl and is maximal Kᵣ₊₂-free then we have a wheel like graph -/
 lemma exists_IsWheel (h : G.MaxCliqueFree (r + 2))  (hnc : ¬ G.IsCompletePartite) :
     ∃ v w₁ w₂ s t, G.IsWheel r v w₁ w₂ s t :=by
@@ -55,8 +56,7 @@ lemma exists_IsWheel (h : G.MaxCliqueFree (r + 2))  (hnc : ¬ G.IsCompletePartit
   exact ⟨v,w₁,w₂,s,t,h3,⟨hvs,hvt,hw1s,hw2t⟩,⟨hcsv,hcsw1,hctv,hctw2⟩⟩
 
 namespace IsWheel
-variable {x v w₁ w₂ : α} {s t : Finset α}
-variable (hw : G.IsWheel r v w₁ w₂ s t) include hw
+variable {x v w₁ w₂ : α} {s t : Finset α} (hw : G.IsWheel r v w₁ w₂ s t) include hw
 lemma symm :  G.IsWheel r v w₂ w₁ t s := by
   obtain ⟨p2,⟨d1,d2,d3,d4⟩,⟨c1,c2,c3,c4⟩⟩:=hw
   exact ⟨p2.symm,⟨d2,d1,d4,d3⟩,⟨c3,c4,c1,c2⟩⟩
@@ -76,23 +76,11 @@ lemma card_cliques : s.card = r ∧ t.card = r:=by
   · have :=hw.cliques.2.2.1.2
     rwa [card_insert_of_not_mem hw.disj.2.1,Nat.succ_inj] at this
 
-/-- The vertex set of the Wheel -/
-@[reducible]
-def verts (_hw : G.IsWheel r v w₁ w₂ s t) : Finset α := (insert v (insert w₁ (insert w₂ (s ∪ t))))
-
-/-- Helper lemma to show x ∈ W -/
-lemma mem_verts : x ∈ insert w₁ s ∨ x ∈ insert w₂ t ∨ x ∈ insert v s ∨ x ∈ insert v t ↔ x ∈ hw.verts
-  :=by aesop
-
-/-- vertices of IsP2Compl are in W -/
-lemma mem_verts_IsP2Compl  : v ∈ hw.verts ∧ w₁ ∈ hw.verts ∧ w₂ ∈ hw.verts:=by
-  simp only [←mem_verts,mem_insert]; tauto
-
 /-- A wheel consists of the 3 vertices v, w₁, w₂, and the r-sets s , t but the size will vary
 depending on how large |s ∩ t| is, so a useful identity is
 #verts in Wheel =  |s ∪ t| + 3 = 2r + 3 - |s ∩ t|, which we express without subtraction -/
-lemma card_verts_add_inter  : #hw.verts + #(s ∩ t) = 2 * r + 3:=by
-  rw [verts, card_insert_of_not_mem, add_comm, card_insert_of_not_mem,card_insert_of_not_mem]
+lemma card_verts_add_inter  : #(insert v (insert w₁ (insert w₂ (s ∪ t)))) + #(s ∩ t) = 2 * r + 3:=by
+  rw [card_insert_of_not_mem, add_comm, card_insert_of_not_mem,card_insert_of_not_mem]
   · simp only [←add_assoc,card_inter_add_card_union,two_mul,hw.card_cliques.1,hw.card_cliques.2]
   · rw [mem_union,not_or]
     exact ⟨hw.disj'.2, hw.disj.2.2.2⟩
@@ -103,9 +91,8 @@ lemma card_verts_add_inter  : #hw.verts + #(s ∩ t) = 2 * r + 3:=by
     exact ⟨hw.IsP2Compl.ne.1,hw.IsP2Compl.ne.2, hw.disj.1,hw.disj.2.1⟩
 
 /-- Every wheel contains at least 3 vertices: v w₁ w₂-/
-lemma three_le_card_verts : 3 ≤ hw.verts.card := two_lt_card.2
-  ⟨v,hw.mem_verts_IsP2Compl.1,w₁,hw.mem_verts_IsP2Compl.2.1,w₂,
-  hw.mem_verts_IsP2Compl.2.2,hw.IsP2Compl.ne.1,hw.IsP2Compl.ne.2,hw.IsP2Compl.edge.ne⟩
+lemma three_le_card_verts : 3 ≤ #(insert v (insert w₁ (insert w₂ (s ∪ t)))) := two_lt_card.2
+  ⟨v,by simp,w₁,by simp,w₂,by simp,hw.IsP2Compl.ne.1,hw.IsP2Compl.ne.2,hw.IsP2Compl.edge.ne⟩
 
 /-- If s ∩ t contains an r-set then then s ∪ {w₁,w₂} is Kᵣ₊₂ so -/
 lemma card_clique_free (h : G.CliqueFree (r + 2)) : #(s ∩ t) < r:=by
@@ -184,18 +171,16 @@ open Classical
 /-- We can build a wheel with a larger common clique set if there is a core vertex that is
  adjacent to all but at most 2 of the vertices of the wheel -/
 lemma bigger_wheel (h: G.CliqueFree (r + 2)) (hWc: ∀ {y}, y ∈ s ∩ t → G.Adj x y)
-(hsmall : #(hw.verts.filter (fun z => ¬ G.Adj  x z)) ≤ 2) : ∃ a b,  a ∉ t ∧ b ∉ s ∧
+(hsmall : #((insert v (insert w₁ (insert w₂ (s ∪ t)))).filter (fun z => ¬ G.Adj  x z)) ≤ 2) :
+    ∃ a b, a ∉ t ∧ b ∉ s ∧
     (G.IsWheel r v w₁ w₂ (insert x (s.erase a)) (insert x (t.erase b))) :=by
+  let W := (insert v (insert w₁ (insert w₂ (s ∪ t))))
   obtain ⟨a,b,c,d,ha,haj,hb,hbj,hc,hcj,hd,hdj,hab, had,hbc,hat,hbs⟩:= hw.exist_non_adj_core h hWc
   have ac_bd : c = a ∧ d = b:= by
     apply card_le_two_of_four hab had hbc
     apply le_trans (card_le_card _) hsmall
-    intro z; simp_rw [mem_filter,← mem_verts,mem_insert,mem_singleton] at *
-    rintro (rfl|rfl|rfl|rfl)
-    · exact ⟨Or.inl ha, haj⟩
-    · exact ⟨Or.inr <| Or.inl hb,hbj⟩
-    · exact ⟨Or.inr <| Or.inr <| Or.inl hc,hcj⟩
-    · exact ⟨Or.inr <| Or.inr <| Or.inr hd,hdj⟩
+    intro z; simp_rw [mem_filter,mem_insert,mem_singleton] at *
+    aesop
   simp only [ac_bd.1,ac_bd.2,mem_insert] at ha hb hc hd;
   have has: a ∈ s:= by
     obtain (rfl|ha) := ha;
@@ -226,17 +211,13 @@ lemma bigger_wheel (h: G.CliqueFree (r + 2)) (hWc: ∀ {y}, y ∈ s ∩ t → G.
       · apply hw.disj.2.2.2 (hbx ▸ hbt)
       · apply hbj; apply hw.cliques.2.2.2.1; apply mem_insert_self
         apply mem_insert_of_mem hbt; exact hbx
-  have wadj: ∀ w ∈ hw.verts, w ≠ a → w ≠ b → G.Adj w x:=by
+  have wadj: ∀ w ∈ W, w ≠ a → w ≠ b → G.Adj w x:=by
     intro z hz haz hbz
     by_contra hf; push_neg at hf
-    have gt2: 2 < #(hw.verts.filter (fun z => ¬ G.Adj x z)):=by
+    have gt2: 2 < #(W.filter (fun z => ¬ G.Adj x z)):=by
       refine  two_lt_card.2 ⟨a,?_,b ,?_ ,z ,?_ ,hab, haz.symm, hbz.symm⟩ <;> rw [mem_filter]
-      · refine ⟨?_,haj⟩
-        apply hw.mem_verts.1; left
-        apply mem_insert.2 <| Or.inr has
-      · refine ⟨?_,hbj⟩
-        apply hw.mem_verts.1;right; left
-        apply mem_insert.2 <| Or.inr hbt
+      · aesop
+      · aesop
       · rw [adj_comm] at hf
         exact ⟨hz,hf⟩
     apply Nat.lt_le_asymm gt2 hsmall
@@ -253,49 +234,29 @@ lemma bigger_wheel (h: G.CliqueFree (r + 2)) (hWc: ∀ {y}, y ∈ s ∩ t → G.
   · refine ⟨?_,?_,?_,?_⟩
     · apply hw.cliques.1.insert_insert_erase has hw.disj.1
       intro z hz hza; symm
-      apply wadj z _ hza
-      · rintro rfl;
-        cases mem_insert.1 hz with
-        | inl hz => exact habv.2 hz.symm
-        | inr hz => exact hbs hz
-      · apply  hw.mem_verts.1 (Or.inr <| Or.inr <| Or.inl hz);
+      aesop
     · apply hw.cliques.2.1.insert_insert_erase has hw.disj.2.2.1
       intro z hz hza; symm
-      apply wadj z _ hza
-      · rintro rfl;
-        cases mem_insert.1 hz with
-        | inl hz => exact hbw1 hz
-        | inr hz => exact hbs hz
-      · apply  hw.mem_verts.1 (Or.inl hz);
+      aesop
     · apply hw.cliques.2.2.1.insert_insert_erase hbt hw.disj.2.1
       intro z hz hzb; symm
-      apply wadj z  _ _ hzb
-      · apply  hw.mem_verts.1 (Or.inr <| Or.inr <| Or.inr hz);
-      · rintro rfl;
-        cases mem_insert.1 hz with
-        | inl hz => exact habv.1 hz.symm
-        | inr hz => exact hat hz
+      aesop
     · apply hw.cliques.2.2.2.insert_insert_erase hbt hw.disj.2.2.2
       intro z hz hzb; symm
-      apply wadj z  _ _ hzb
-      · apply  hw.mem_verts.1 (Or.inr <| Or.inl hz);
-      · rintro rfl;
-        cases mem_insert.1 hz with
-        | inl hz => exact haw2 hz
-        | inr hz => exact hat hz
+      aesop
 
 /-- For any x there is a wheelvertex that is not adjacent to x (in fact there is one in s+w₁) -/
 lemma one_le_non_adj  (hcf: G.CliqueFree (r + 2)) (x : α) :
-    1 ≤ #(hw.verts.filter (fun z => ¬ G.Adj  x z)):=by
+    1 ≤ #(((insert v (insert w₁ (insert w₂ (s ∪ t))))).filter (fun z => ¬ G.Adj  x z)):=by
   apply card_pos.2
   obtain ⟨_,hz⟩:=hw.cliques.2.1.exists_non_adj_of_cliqueFree_succ hcf x
-  exact ⟨_,mem_filter.2 ⟨hw.mem_verts.1 (Or.inl hz.1),hz.2⟩⟩
+  exact ⟨_,mem_filter.2 ⟨by aesop,hz.2⟩⟩
 
 /-- If G is Kᵣ₊₂-free contains a MaxWheel W then every vertex that is adjacent to all of the common
 clique vertices is not adjacent to at least 3 vertices in W -/
 lemma three_le_nonadj (hmcf : G.MaxCliqueFree (r + 2)) (hWc: ∀ {y}, y ∈ s ∩ t → G.Adj x y)
 (hmax: ∀ s' t', G.IsWheel r v w₁ w₂ s' t' → #(s' ∩ t') ≤ #(s ∩ t)) :
-    3 ≤ #(hw.verts.filter fun z => ¬ G.Adj  x z) :=by
+    3 ≤ #(((insert v (insert w₁ (insert w₂ (s ∪ t))))).filter fun z => ¬ G.Adj  x z) :=by
   by_contra! hc; change _ + 1 ≤ _ + 1 at hc
   simp only [Nat.reduceLeDiff] at hc
   obtain ⟨c,d,hw1,hw2,hbW⟩:= hw.bigger_wheel hmcf.1 hWc hc
