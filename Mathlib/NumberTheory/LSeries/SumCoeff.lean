@@ -22,10 +22,12 @@ section lemmas
 -- modified function
 
 theorem modif₀ (f : ℕ → ℂ) {n : ℕ} (hn : n ≠ 0) :
-    (fun n ↦ if n = 0 then 0 else f n) n = f n := sorry
+    (fun n ↦ if n = 0 then 0 else f n) n = f n := by
+  simp_rw [if_neg hn]
 
 theorem modif₁ (f : ℕ → ℂ) :
-    (fun n ↦ if n = 0 then 0 else f n) =ᶠ[atTop] f := sorry
+    (fun n ↦ if n = 0 then 0 else f n) =ᶠ[atTop] f := by
+  filter_upwards [eventually_ne_atTop 0] with n hn using modif₀ f hn
 
 theorem modif₂₀ {𝕜 : Type*} [RCLike 𝕜] (f : ℕ → 𝕜) (n : ℕ) :
     ∑ k ∈ Icc 1 n, (if k = 0 then 0 else f k) = ∑ k ∈ Icc 1 n, f k := by
@@ -38,14 +40,12 @@ theorem modif₂ (f : ℕ → ℂ) (n : ℕ) :
   exact modif₂₀ _ _
 
 theorem modif₃ {𝕜 : Type*} [RCLike 𝕜] {f : ℕ → 𝕜} (hf : f 0 = 0) (n : ℕ) :
-    ∑ k ∈ Icc 0 n, f k = ∑ k ∈ Icc 1 n, f k := sorry
-
--- theorem new_aux₁ {α : Type*} {a : α} [Norm α] {f : ℕ → α} {n : ℕ} :
---      ∑ k ∈ Icc 1 n, ‖if k = 0 then a else f k‖ = ∑ k ∈ Icc 1 n, ‖f k‖ := by
---   refine Finset.sum_congr rfl fun k hk ↦ ?_
---   rw [if_neg (zero_lt_one.trans_le (mem_Icc.mp hk).1).ne']
+    ∑ k ∈ Icc 0 n, f k = ∑ k ∈ Icc 1 n, f k := by
+  rw [← Nat.Icc_insert_succ_left n.zero_le, sum_insert (mem_Icc.not.mpr (by omega)),
+    hf, zero_add, zero_add]
 
 -- cpow / rpow
+
 theorem new_aux₂ {t : ℝ} {c : ℂ} (ht : 0 < t):
     ‖(t : ℂ) ^ c‖ = t ^ c.re := by
   rw [Complex.norm_eq_abs, Complex.abs_cpow_eq_rpow_re_of_pos ht]
@@ -132,45 +132,6 @@ theorem new_aux₆ {𝕜 : Type*} [RCLike 𝕜] {m : ℕ} {f : ℕ → 𝕜} {r 
     isEquivalent_nat_floor.isBigO.rpow hr ?_
   filter_upwards [eventually_ge_atTop 0] with _ ht using ht
 
-
-
---
-
-theorem aux₄₂ {t : ℝ} {c : ℂ} (ht : t ≠ 0) (hc : c ≠ 0) :
-    (deriv fun (t : ℝ) ↦ (t : ℂ) ^ c) t = c * (t : ℂ) ^ (c - 1) :=
-  deriv_ofReal_cpow_const ht hc
-
-theorem aux₅ {R : Type*} [AddCommMonoid R] {f : ℕ → R} {n : ℕ} :
-    ∑ k ∈ Icc 0 n, (fun n ↦ if n = 0 then 0 else f n) k =
-      ∑ k ∈ Icc 1 n, f k := by
-  rw [← Nat.Icc_insert_succ_left n.zero_le, sum_insert (mem_Icc.not.mpr (by omega)),
-    zero_add, if_pos rfl, zero_add]
-  exact Finset.sum_congr rfl
-    (fun _ h ↦ by rw [if_neg (zero_lt_one.trans_le (mem_Icc.mp h).1).ne'])
-
-theorem aux₈₀ {r : ℝ} (hr : 0 < r) :
-    Tendsto (fun n : ℕ ↦ (n : ℝ) ^ (-r)) atTop (𝓝 0) := by
-  exact (tendsto_rpow_neg_atTop hr).comp tendsto_natCast_atTop_atTop
-
-theorem aux₈ {r a : ℝ} (hr : 0 < r) (ha : 0 < a) :
-    ∀ᶠ (x : ℕ) in atTop, ‖(x : ℝ) ^ (- r)‖ < a :=
-  (NormedAddCommGroup.tendsto_nhds_zero.mp (aux₈₀ hr)) _ ha
-
-theorem aux₁₀ {t : ℝ} {c : ℂ} (ht : t ≠ 0) (hc : c ≠ 0) :
-    DifferentiableAt ℝ (fun x : ℝ ↦ (x : ℂ) ^ c) t :=
-  differentiableAt_id.ofReal_cpow_const ht hc
-
-theorem aux₁₂ {c : ℂ} (hc : c ≠ 0) :
-    (fun t ↦ deriv (fun x : ℝ ↦ (x : ℂ) ^ c) t) =O[atTop] fun t ↦ t ^ (c.re - 1) := by
-  refine IsBigO.congr'_left (f₁ := fun t : ℝ ↦ c * (t : ℂ) ^ (c - 1)) ?_ ?_
-  · refine Asymptotics.IsBigO.const_mul_left ?_ _
-    rw [← Asymptotics.isBigO_norm_left]
-    refine EventuallyEq.isBigO ?_
-    filter_upwards [eventually_gt_atTop 0] with t ht
-    rw [new_aux₂ ht, sub_re, one_re]
-  · filter_upwards [eventually_ne_atTop 0] with t ht
-    rw [aux₄₂ ht hc]
-
 end lemmas
 
 section summable
@@ -217,7 +178,7 @@ end summable
 
 section integral_repr
 
-private theorem integral_repr_aux (f : ℕ → ℂ) (hf : f 0 = 0) {r : ℝ} (hr : 0 ≤ r) {s : ℂ}
+private theorem LSeries_eq_mul_integral_aux {f : ℕ → ℂ} (hf : f 0 = 0) {r : ℝ} (hr : 0 ≤ r) {s : ℂ}
     (hs : r < s.re) (hS : LSeriesSummable f s)
     (hO : (fun n ↦ ∑ k ∈ Icc 1 n, f k) =O[atTop] fun n ↦ (n : ℝ) ^ r) :
     LSeries f s = s * ∫ t in Set.Ioi (1 : ℝ), (∑ k ∈ Icc 1 ⌊t⌋₊, f k) * t ^ (- s - 1) := by
@@ -248,14 +209,24 @@ private theorem integral_repr_aux (f : ℕ → ℂ) (hf : f 0 = 0) {r : ℝ} (hr
     · exact asymp₃ h₂
     · exact new_aux₆ hr hO
 
-theorem integral_repr (f : ℕ → ℂ) {r : ℝ} (hr : 0 ≤ r) {s : ℂ} (hs : r < s.re)
+theorem LSeries_eq_mul_integral (f : ℕ → ℂ) {r : ℝ} (hr : 0 ≤ r) {s : ℂ} (hs : r < s.re)
     (hS : LSeriesSummable f s)
     (hO : (fun n ↦ ∑ k ∈ Icc 1 n, f k) =O[atTop] fun n ↦ (n : ℝ) ^ r) :
     LSeries f s = s * ∫ t in Set.Ioi (1 : ℝ), (∑ k ∈ Icc 1 ⌊t⌋₊, f k) * t ^ (- s - 1) := by
   have h₁ := (LSeriesSummable_congr' s (modif₁ f)).mpr hS
-  rw [← LSeries_congr _ (modif₀ f), integral_repr_aux _ (by rw [if_pos rfl]) hr hs h₁ ?_]
+  rw [← LSeries_congr _ (modif₀ f), LSeries_eq_mul_integral_aux (by rw [if_pos rfl]) hr hs h₁ ?_]
   · simp_rw [modif₂₀]
   · simpa only [modif₂₀] using hO
+
+theorem LSeries_eq_mul_integral_of_nonneg (f : ℕ → ℝ) (hf : ∀ n, 0 ≤ f n) {r : ℝ} (hr : 0 ≤ r)
+    {s : ℂ} (hs : r < s.re) (hO : (fun n ↦ ∑ k ∈ Icc 1 n, f k) =O[atTop] fun n ↦ (n : ℝ) ^ r) :
+    LSeries (fun n ↦ f n) s =
+      s * ∫ t in Set.Ioi (1 : ℝ), (∑ k ∈ Icc 1 ⌊t⌋₊, (f k : ℂ)) * t ^ (- s - 1) := by
+  refine LSeries_eq_mul_integral _ hr hs ?_ ?_
+  · refine LSeriesSummable_of_sum_norm_bigO (hO.congr_left fun _ ↦ ?_) hr hs
+    simp_rw [norm_real, Real.norm_of_nonneg (hf _)]
+  · refine (hO.congr_left fun _ ↦ ?_).of_norm_left
+    rw [← ofReal_sum, norm_real, Real.norm_of_nonneg (Finset.sum_nonneg fun _ _ ↦ (hf _))]
 
 end integral_repr
 
@@ -264,21 +235,33 @@ noncomputable section Residue
 variable (f : ℕ → ℂ) {l : ℂ}
   (hlim : Tendsto (fun n : ℕ ↦ (∑ k ∈ Icc 1 n, f k : ℂ) / n) atTop (𝓝 l))
 
+section lemmas
+
+-- Asymptotics
+
+include hlim in
+theorem key₃ : (fun n : ℕ ↦ ∑ k ∈ Icc 1 n, f k) =O[atTop] fun n ↦ (n : ℝ) ^ (1 : ℝ) := by
+  simp_rw [Real.rpow_one]
+  refine Asymptotics.isBigO_norm_left.mp <| Asymptotics.isBigO_of_div_tendsto_nhds ?_ ‖l‖ ?_
+  · filter_upwards [eventually_ne_atTop 0] with _ h using by simp [h]
+  · simpa only [Function.comp_def, norm_div, norm_natCast] using (tendsto_norm.comp hlim)
+
+end lemmas
+
 include hlim in
 theorem step1 {ε : ℝ} (hε : ε > 0) :
     ∀ᶠ t : ℝ in atTop, ‖(∑ k ∈ Icc 1 ⌊t⌋₊, f k) - l * t‖ < ε * t := by
   have h_lim' : Tendsto (fun t : ℝ ↦ (∑ k ∈ Icc 1 ⌊t⌋₊, f k : ℂ) / t) atTop (𝓝 l) := by
-    have := (hlim.comp tendsto_nat_floor_atTop).mul <|
-      tendsto_ofReal_iff.mpr <| tendsto_nat_floor_div_atTop
-    rw [ofReal_one, mul_one] at this
-    refine this.congr' ?_
+    refine (mul_one l ▸ ofReal_one ▸ ((hlim.comp tendsto_nat_floor_atTop).mul <|
+      tendsto_ofReal_iff.mpr <| tendsto_nat_floor_div_atTop)).congr' ?_
     filter_upwards [eventually_ge_atTop 1] with t ht
-    rw [Function.comp_def, ofReal_div, ofReal_natCast, div_mul_div_cancel₀]
-    rwa [Nat.cast_ne_zero, ne_eq, Nat.floor_eq_zero, not_lt]
+    rw [Function.comp_def, ofReal_div, ofReal_natCast, div_mul_div_cancel₀ (by
+      rwa [Nat.cast_ne_zero, ne_eq, Nat.floor_eq_zero, not_lt])]
   rw [Metric.tendsto_nhds] at h_lim'
   filter_upwards [eventually_gt_atTop 0, h_lim' ε hε] with t ht₁ ht₂
   rwa [dist_eq_norm, div_sub' _ _ _ (ne_zero_of_re_pos ht₁), norm_div, norm_real,
     Real.norm_of_nonneg ht₁.le, mul_comm, div_lt_iff₀ ht₁] at ht₂
+
 
 theorem key₁ {s : ℝ} (hs : 1 < s ) : (s - 1) * ∫ (t : ℝ) in Set.Ioi 1, t ^ (- s) = 1 := by
   rw [integral_Ioi_rpow_of_lt (by rwa [neg_lt_neg_iff]) zero_lt_one, Real.one_rpow, neg_div,
@@ -298,14 +281,6 @@ theorem key₂' {s : ℝ} (hs : 1 < s) :
     ← one_div_neg_eq_neg_one_div, neg_add', neg_neg, mul_one_div, div_self]
   rw [sub_ne_zero]
   exact hs.ne'
-
-include hlim in
-theorem key₃ : (fun n : ℕ ↦ ∑ k ∈ Icc 1 n, f k) =O[atTop] fun n ↦ (n : ℝ) ^ (1 : ℝ) := by
-  simp_rw [Real.rpow_one]
-  refine Asymptotics.isBigO_norm_left.mp <| Asymptotics.isBigO_of_div_tendsto_nhds ?_ ‖l‖ ?_
-  · filter_upwards [eventually_ne_atTop 0] with _ h using
-      fun h' ↦ False.elim <| h (Nat.cast_eq_zero.mp h')
-  · simpa only [Function.comp_def, norm_div, norm_natCast] using (tendsto_norm.comp hlim)
 
 theorem key₄ {a b : ℝ} {c : ℂ} (ha : 0 < a) :
     IntegrableOn (fun t : ℝ ↦ (t : ℂ) ^ c) (Set.Icc a b) := by
@@ -443,7 +418,8 @@ theorem key_step {ε : ℝ} (hε : ε > 0) :
       _ = (s - 1) * s * (C₁ + C₂) +
             s * ε * ((s - 1) * ∫ (t : ℝ) in Set.Ioi 1, t ^ (- s)) := ?_
       _ = (s - 1) * s * (C₁ + C₂) + s * ε := by rw [key₂' hs, mul_one]
-    · rw [integral_repr _ zero_le_one (by rwa [ofReal_re]) (hfS _ hs), mul_sub, ← mul_assoc _ l,
+    · rw [LSeries_eq_mul_integral _ zero_le_one (by rwa [ofReal_re]) (hfS _ hs), mul_sub,
+        ← mul_assoc _ l,
         mul_rotate _ _ l, mul_assoc, mul_assoc, key₂ (by rwa [ofReal_re]), mul_one, mul_comm l]
       exact key₃ f hlim
     · rw [← Set.Ioc_union_Ioi_eq_Ioi (le_max_left 1 T₀)]
@@ -502,7 +478,8 @@ theorem key_step {ε : ℝ} (hε : ε > 0) :
       rw [new_aux₂ (zero_lt_one.trans ht), neg_re, ofReal_re]
 
 include hlim hfS in
-theorem final : Tendsto (fun s : ℝ ↦ (s - 1) * LSeries f s) (𝓝[>] 1) (𝓝 l) := by
+theorem LSeries_tendsto_sub_mul_nhds_one_of_tendsto_sum_div :
+    Tendsto (fun s : ℝ ↦ (s - 1) * LSeries f s) (𝓝[>] 1) (𝓝 l) := by
   refine Metric.tendsto_nhdsWithin_nhds.mpr fun ε hε ↦ ?_
   have hε6 : 0 < ε / 6 := by positivity
   have hε3 : 0 < ε / 3 := by positivity
@@ -537,12 +514,14 @@ theorem final : Tendsto (fun s : ℝ ↦ (s - 1) * LSeries f s) (𝓝[>] 1) (�
   refine add_lt_add_right (add_lt_add_left ?_ (ε / 3)) (ε / 3)
   exact lt_of_lt_of_eq ((mul_lt_mul_right hε6).mpr sle2) (by ring)
 
-theorem final_real (f : ℕ → ℝ) {l : ℝ}
+theorem LSeries_tendsto_sub_mul_nhds_one_of_tendsto_sum_div_and_nonneg (f : ℕ → ℝ) {l : ℝ}
     (hf : Tendsto (fun n ↦ (∑ k ∈ Icc 1 n, f k) / (n : ℝ)) atTop (𝓝 l))
     (hf' : ∀ n, 0 ≤ f n) :
     Tendsto (fun s : ℝ ↦ (s - 1) * LSeries (fun n ↦ f n) s) (𝓝[>] 1) (𝓝 l) := by
-  refine final (fun n ↦ f n) (hf.ofReal.congr fun _ ↦ ?_) fun s hs ↦
-    LSeriesSummable_of_sum_norm_bigO (f := fun n ↦ f n) ?_ zero_le_one (by rwa [ofReal_re])
+  refine  LSeries_tendsto_sub_mul_nhds_one_of_tendsto_sum_div (fun n ↦ f n)
+    (hf.ofReal.congr fun _ ↦ ?_)
+    fun s hs ↦ LSeriesSummable_of_sum_norm_bigO (f := fun n ↦ f n) ?_ zero_le_one
+      (by rwa [ofReal_re])
   · simp only [ofReal_div, ofReal_sum, ofReal_natCast]
   · convert Asymptotics.IsBigO.norm_left <| key₃ (fun n ↦ f n) ?_ (l := l)
     · rw [← ofReal_sum, norm_real, Real.norm_of_nonneg (Finset.sum_nonneg fun _ _ ↦ hf' _)]
