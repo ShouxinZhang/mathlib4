@@ -46,9 +46,8 @@ structure IsWheel (r : ℕ) (v w₁ w₂ : α) (s t : Finset α) : Prop where
               ∧ G.IsNClique (r + 1) (insert v t) ∧ G.IsNClique (r + 1) (insert w₂ t)
 
 variable {G}
-
 /-- If G contains a IsP2Compl and is maximal Kᵣ₊₂-free then we have a wheel like graph -/
-lemma exists_IsWheel (h : G.MaxCliqueFree (r + 2))  (hnc : ¬ G.IsCompletePartite) :
+lemma exists_IsWheel (h : G.MaxCliqueFree (r + 2)) (hnc : ¬ G.IsCompletePartite) :
     ∃ v w₁ w₂ s t, G.IsWheel r v w₁ w₂ s t :=by
   obtain ⟨v,w₁,w₂,h3⟩:=G.IsP2Compl_of_not_completePartite hnc
   obtain ⟨s,hvs,hw1s,hcsv,hcsw1⟩:=h.exists_of_not_adj h3.ne.1 h3.nonedge.1
