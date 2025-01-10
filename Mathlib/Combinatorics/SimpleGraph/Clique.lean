@@ -243,9 +243,9 @@ lemma IsNClique.insert_erase (hs : G.IsNClique n s) (had: ∀ w ∈ s, w ≠ b �
     intro w h; rw [mem_erase] at h
     apply had w h.2 h.1
 
-lemma IsNClique.insert_insert (h1 : G.IsNClique (n + 1) (insert a s))
-(h2 : G.IsNClique (n + 1) (insert b s)) (h2' : b ∉ s) (hadj : G.Adj a b) :
-    G.IsNClique (n + 2) (insert b ((insert a) s)) := by
+lemma IsNClique.insert_insert (h1 : G.IsNClique n (insert a s))
+(h2 : G.IsNClique n (insert b s)) (h2' : b ∉ s) (hadj : G.Adj a b) :
+    G.IsNClique (n + 1) (insert b ((insert a) s)) := by
   apply h1.insert
   intro b hb
   obtain (rfl | h):=mem_insert.1 hb
