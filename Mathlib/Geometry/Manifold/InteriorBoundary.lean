@@ -470,7 +470,42 @@ lemma ContMDiff.inr : ContMDiff I I n (@Sum.inr M M') := by sorry
 
 -- TODO: two more lemmas to prove
 lemma ContMDiff.sum_elim {f : M → N} {g : M' → N}
-    (hf : ContMDiff I J n f) (hg : ContMDiff I J n g) : ContMDiff I J n (Sum.elim f g) := sorry
+    (hf : ContMDiff I J n f) (hg : ContMDiff I J n g) : ContMDiff I J n (Sum.elim f g) := by
+
+  intro p
+  rw [contMDiffAt_iff]
+  refine ⟨(Continuous.sum_elim hf.continuous hg.continuous).continuousAt, ?_⟩
+
+  by_cases h: p.isLeft
+  · set x := Sum.getLeft p h
+    have : p = Sum.inl x := Sum.eq_left_getLeft_of_isLeft h
+    rw [this]
+    simp only [extChartAt, ChartedSpace.sum_chartAt_inl]
+    set C := chartAt H x
+    set F := Sum.elim f g
+    --rw [← this]
+    unfold F
+    dsimp
+    rw [Sum.inl_injective.extend_apply C]
+    -- now: Sum.elim combined with Sum.inl simplifies to f, then it's smoothness of f
+    -- similarly for g
+    apply ContDiffWithinAt.congr_of_eventuallyEq
+    · sorry  -- diff of the fn I want; what's f?
+    · sorry  -- fns equally eventually near p
+    · sorry
+      --simp only [extChartAt]
+      --simp only [ChartedSpace.sum_chartAt_inl]
+      --set C := chartAt H x
+      --rw [ChartedSpace.sum_chartAt_inl]
+
+
+    sorry
+      --simp [ChartedSpace.sum_chartAt_inl]
+      --congr
+      --apply Sum.inl_injective.extend_apply (chartAt _ x)
+
+    --sorry
+  sorry
 
 -- actually, want an iff version here...
 lemma ContMDiff.sum_map {n : ℕ∞} [Nonempty H'] {f : M → N} {g : M' → N'}
