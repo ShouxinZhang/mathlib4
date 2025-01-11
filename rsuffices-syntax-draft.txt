@@ -1,0 +1,7 @@
+chore: change `rsuffices` syntax
+
+Require a proof to be supplied right away, instead of the stream-of-conciousness syntax.
+This was proposed in #.....
+All arguments in favour of stream-of-conciousness syntax ("makes it easier to defer goals")
+do not apply here, as `rsuffices` is made precisely to defer goals.
+

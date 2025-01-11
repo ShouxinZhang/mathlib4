@@ -1,0 +1,861 @@
+feat(AlgebraicTopology): homotopy in quasicategories
+feat: rename `connectedComponentOfOne` to `identityComponent`, prove that it is normal and open
+refactor: generalize `MonoidHom.ker` and `MonoidHom.range` to `MonoidHomClass`
+feat(GroupTheory/Submonoid/Operations): define homomorphisms of subgroups induced by homomorphisms of groups
+feat(GroupTheory/GroupAction/Basic): define homomorphisms of fixed subgroups induced by homomorphisms of groups
+fix(Topology/MetricSpace/InfSep): Make `infsep` consistent with `diam`, `infdist`
+feat(AlgebraicGeometry/EllipticCurve/Group): compute range of baseChange
+feat: Defining Greedoid
+feat: add `Decidable`, `Fintype`, `Encodable` linters
+feat: norm positivity extension proves strict positivity
+feat: three misc lemmas about Hausdorff distance
+refactor(CategoryTheory/MorphismProperty)
+feat(Data/Setoid): add the operations of taking the equivalence class of an element and of saturating a set wrt an equivalence relation
+feat: add simp_digits tactic
+doc(IsROrC): expand the docstring
+feat(Topology/UniformSpace): define uniform preordered space
+chore: generalize `IsBoundedLinearMap` to modules
+feat(Topology/Algebra/ConstMulAction): properties of continuous actions in Hausdorff spaces
+feat: List.cons_sublist_append_iff_right
+feat(Topology/MetricSpace/WellSpaced): Define sets that are *well-spaced*.
+feat(LinearAlgebra/{ExteriorPower,LinearIndependent,TensorPower}): define the exterior powers of a module and prove some of their basic properties
+feat: one time pad string diagram
+feat: Define `Nat.finMulAntidiagonal`, the `Finset` of tuples of naturals with a fixed product.
+feat(Topology/UniformSpace): prove that a uniform space is completely regular
+feat(Order/FunLike): define `PointwiseLE`
+feat(Tactic): `ring` modulo a given characteristic
+feat: convert curried type functions into uncurried type functions
+feat: germs of smooth functions
+feat(Logic): Arithmetization of partial recursive functions (toward G\u00f6del's first incompleteness theorem)
+feat: define spectral spaces and prove that a quasi-compact open of a spectral space is spectral
+feat(CategoryTheory/Limits): add `Functor.mapBinaryBiconeInv`
+feat(ProofTheory): Define logical symbols abstractly; opens new top-level section, drawing from lean4-logic
+feat(LinearAlgebra/Multilinear/DirectSum, LinearAlgebra/DirectSum/{PiTensorProduct,Finsupp}): interaction between `MultilinearMap` and `DirectSum`, and between `PiTensorProduct` and `DirectSum`
+feat(LinearAlgebra/{TensorProductBasis,Dual}): basis and dual of `PiTensorProduct`
+feat(GroupTheory/GroupAction): instance `MulAction (\u03b2 \u29f8 H) \u03b1`
+bench: base of lean4#3473
+mrb/cover data fields
+feat: Myhill\u2013Nerode theorem
+chore(Polynomial/*): various cleanups
+fix: unsqueeze simp, re Ya\u00ebl's comments on #11259
+feat: Topology of pointwise convergence for continuous linear maps
+refactor(Topology/Algebra/Module/WeakDual): Clean up
+feat: `syntax_rules`
+feat: `linting_rules` and deprecated syntax
+feat: add `fast_instance%` elaborator
+bench: test syntax linter
+refactor(Finset): redefine Finset.diag, review API
+chore(Group/RingTheory.Congruence): make `Quotient`'s reducible 
+feat: Interactive Library Rewrite
+feat: Classification of etale k-algebras.
+feat : Define KappaLindel\u00f6f spaces
+feat(Algebra/Star/Unitary): add unitarySubgroup
+feat: completion of a uniform multiplicative group
+feat: the terminal refine linter
+chore: use @[inherit_doc] more and remove some nolints
+doc: add @[inherit_doc] to some local notation
+feat: The functor of points of a scheme
+feat: RefinedDiscrTree
+feat: monoidal category structure on bialgebras
+feat: the `suffa` tactic
+feat: tensor products of Hopf algebras
+feat: monoidal structure on Hopf algebras
+feat(GroupTheory/GroupAction/Primitive)
+feat(GroupTheory/GroupAction/Primitive): lemmas about primitive actions for finite sets
+feat: auto-bugs
+feat : complete API for K-Lindel\u00f6f spaces
+feat(Mathlib/Tactic/Widget/StringDiagram): support 2-morphisms in bicategories
+feat: generalize instIsLowerProd to arbitrary products
+feat: generic linter, absorbing `cdot` linter and `attribute [instance] in` linter
+feat(Data/Matrix/Basic): add notation for `m\u00d7n`-Matrices
+lint also `let` vs `have`
+feat: generalize isLittleO_const_id_atTop/atBot
+feat(Combinatorics/SimpleGraph): Provide iff statements for distance equal and greater than 2
+feat(Mathlib.RingTheory.TensorProduct.Polynomial) : tensor product of a (univariate) polynomial ring
+feat: add Tropically bound polynomials
+feat: \"outer product\" of functions that tend to zero on the cocompact filter
+chore: replace `refine ?_` and `refine' _` by `apply`
+feat : define pre-tight and tight measures
+feat(Analysis/BoxIntegral/UnitPartition): Prove results linking integral point counting and integrals
+feat: more linting of cdots
+test: lint and unlint `\u00b7`
+chore: remove some cdots
+style: replace preimage_val with \u2193\u2229 notation
+feat: toND -- auto-generating natDegree
+feat(Cocardinal) : add some more api
+style: Change Subtype.val to (\u2191)
+first translations
+feat (Lattice/Covolume): Add results linking point counting in lattices and covolume
+chore: split Data.DFinsupp.Basic
+test: autotranslations Bot --> Top
+remove trailingDegree
+chore: attribute [induction_eliminator]
+feat: allow `nsmul` / `zsmul` to be omitted again, with a warning
+perf: improves the performance of the `Repr (Equiv.Perm \u03b1)` instance
+refactor: change the format of `Repr (Equiv.Perm \u03b1)` from `{c[0, 1], c[2, 3]}` to `c[0, 1] * c[2, 3]`
+feat(Algebra/Ring/Defs): Add NonUnitalCommSemiring.toNonUnitalNonAssocCommSemiring instance
+feat: the product of two sums in a nonarchimedean ring
+feat(List/OffDiag): new file
+translation: MonoidAlgebra to AddMonoidAlgebra
+feat: completion of a nonarchimedean multiplicative group
+feat: add ContDiff.lipschitzOnWith
+feat(RingTheory/Smooth): smooth morphisms are flat
+feat(RingTheory/RingOfDefinition): basic API
+feat(RingTheory/Smooth): Noetherian ring of definition
+feat: define Gray code
+feat: add lemmas for Nat/Bits, Nat/Bitwise and Nat/Size
+feat(Combinatorics/HypergraphRamsey): Ramsey's theorem for hypergraphs
+perf: decouple algebraic and order hierarchies in type class search
+feat(LinearAlgebra/UnitaryGroup): Add properties of Special Unitary Group
+feat: linter and script for `theorem` vs `lemma`
+feat: port ge_or_gt linter from mathlib3
+chore: replace some use of > or \u2265 by < or \u2264
+chore: replace more uses of > or \u2265 by < or \u2264
+chore(Quiver.Opposite): make `Quiver.Hom.op/unop` `abbrev`'s 
+chore: reorganize and rename the Embedding --> Homeomorph constructions
+Lean pr testing 4206
+feat: relax universe constraint in stoneCechExtend
+feat: add `simp` lemma `coeff_eq_zero_of_not_mem_support`
+chore: Move group actions
+feat: Mathlib weekly reports
+feat(NumberTheory): characterize elliptic divisibility sequences
+Lean pr testing 4152
+feat(NumberTheory/EllipticDivisibilitySequence): show elliptic relations follow from even-odd recursion
+refactor(Algebra/Module/LocalizedModule): Redefine `LocalizedModule` in terms of `OreLocalization`.
+refactor(RingTheory/OreLocalization/Module): remove `LocalizedModule.mk`.
+feat(.vscode/module-docstring.code-snippet): Prevent auto-complete from firing on `do`
+Lean pr testing 4272
+Lean pr testing 4276
+feat: the Chebyshev polynomials C and S
+Lean pr testing 4277
+style(Mathlib/Data/Seq/Seq): rename `Stream'.Seq` to `Sequence`
+feat: basic concepts of auction theory
+feat: power of product of two reflections
+feat(Semicontinuous): add `comp` lemma
+feat: some results about infinite products of the form 1+a_n
+chore(Mathlib/Data/Seq/Seq): add `cases_eliminator`s to `Sequence.recOn`
+dev: generic replacement
+Lean pr testing 4319
+feat: mabel tactic for multiplicative abelian groups
+perf(Geometry/Manifold/Instances/Sphere): speed up
+perf(Manifold/ContMDiff/NormedSpace): add shortcut instances
+perf(Geometry): more small speed-ups
+feat(Algebra/Lie): add Lie's theorem
+feat: automatically replace deprecations
+test: count all
+feat(Computability/ContextFreeGrammar): closure under union
+test: automatically undeprecate
+Lean pr testing 4379
+feat: add multivariate polynomial modules
+feat: add a `dsimproc` for vector notation
+refactor(Mathlib/Algebra/ContinuedFractions/*): change the definition of regular continuous fractions
+feat: Hopf algebra structure on monoid algebras 
+feat(FiberedCategory/HasFibers): define HasFibers class
+Lean pr testing 4223
+feat(Topology/Module): generalize `ContinuousLinearMap.compSL`
+chore: redefine `Nat.bit` `Nat.div2` `Nat.bodd`
+feat: the unusedSetOptionIn linter
+test: automatically replace deprecations/unused `set_option ... in`s
+feat(Combinatorics): add definitions for network flows
+feat: some finset lemmas
+feat: More robust ae notation
+chore: make expensive definitions noncomputable
+deprecate injective
+feat(EllipticCurve): ZSMul formula in terms of division polynomials
+feat(NumberTheory/EllipticDivisibilitySequence): extend even-odd recursion to integers
+refactor: Primrec and Partrec
+perf(Algebra/{Group, GroupWithZero, Ring}/InjSurj): reduce everything
+feat(EllipticCurve): the universal elliptic curve
+perf: skip some typeclasses in TC search
+feat(Topology/Order/HullKernel): Add the Hull-Kernel Topology
+feat: metric entropy
+feat(MvPolynomial/PDeriv): Euler's (weighted) homogeneous identity
+feat(Data/DigitExpansion): begin defining variant of reals without rationals
+feat(Data/DigitExpansion): reals via digit expansion are complete
+feat: a linter to flag unnecessary uses of `nolint simpNF`
+feat: lake exe refactor, initial framework
+chore(Topology): replace continuity -> fun_prop
+feat: a linter to flag potential confusing conventions
+chore: replace continuity -> fun_prop in remaining directories
+perf (RingTheory.OreLocalization): make data irreducible 
+feat(MeasureTheory): TendstoInMeasure gives ae unique limits; TendstoInMeasure equivalent to subsequences converging ae
+Test/decl diff in lean
+feat(SetTheory/Ordinal/Clubs): define club sets and prove basic properties
+experiment: globally increase maxSynthPendingDepth
+feat(CI): continue after mk_all fails
+draft: mk_all twice in CI, cache fails to be checked
+feat(Bicategory/Functorbicategory): define bicategory of pseudofunctors
+chore(Algebra.Basic): postpone importing algebra instances for `Nat`, `Int`, and `Rat`
+feat: Define the localization of a fractional ideal at a prime ideal
+feat: Prove equivalence of `isDedekindDomain` and `isDedekindDomainDvr`
+chore(RingTheory/Generators): make algebra instance a def
+Lean pr testing 4592
+feat(RepresentationTheory/FdRep): FdRep is a full subcategory of Rep
+chore: split Mathlib.Algebra.Star.Basic
+Testing for lean4#4609
+feat: the Dialectica category is monoidal closed
+perf: disable the `unusedVariables` linter for speed
+feat(Data/Multiset/Order): add Dershowitz-Manna Ordering and Theorem
+feat: show stalk of presheaf of modules is a module over stalk of ring
+fix(GeneralizeProofs): unreachable! bug
+feat(ENNReal/Basic): add `ofNat_ne_top` and `top_ne_ofNat`
+feat(SetTheory/Surreal/Division): define the field structure on the Surreal numbers
+feat: module structure of filtered colimit of abelian groups over filtered colimit of rings
+feat(GroupTheory/Perm/Support): Redefine `support` to be a `Set`, removing finiteness requirements.
+feat: if-then-else of exclusive or statement
+fix: make concrete cycle notation local
+chore: add typeclasses to unify various `add_top`, `add_eq_top`, etc.
+feat: degree is invariant under graph isomorphism
+feat(AlgebraicGeometry/EllipticCurve/Affine): add equivalences between points and explicit WithZero types
+feat(runLinter): allow only running certain linters
+feat(Data/Nat/PartENat): add lemmas for PartENat
+perf: change instance priority and order about `OfNat`
+feat(RingTheory/Flat/CategoryTheory): a flat module has vanishing higher Tor groups
+feat(RingTheory/Flat/CategoryTheory): a module is flat iff tensoring preserves finite limits
+feat: generalize `fract_div_intCast_eq_div_intCast_mod`
+feat(Analysis/MeanInequalities): Weighted QM-AM inequality
+chore: use `Disjoint` nhd filters for all separation axioms
+feat(RingTheory.MvPowerSeries.Topology): define the product topology on mv power series
+feat(AlgebraicGeometry/EllipticCurve/Jacobian): add equivalences between points and explicit WithZero types
+feat: volume of a simplex
+chore: add nndist versions of lemmas
+feat(RingTheory.MvPowerSeries.Topology): a power series is the sum of its homogeneous components
+feat: definition of linear topologies
+profiling: skipKernelTC
+feat(RingTheory.MvPowerSeries.LinearTopology): a linear topology on the ring of power series
+feat(Analysis/Complex/Hadamard): generalize Hadamard's three lines theorem
+feat(Mathlib.RingTheory.MvPowerSeries.Evaluation): evaluation of power series
+chore(Algebra.Basic): scope and rename universal `Nat`-algebra and `Int`-algebra instances
+fix: recognise awaiting-review comments again
+fix(LinearAlgebra/Alternating/Basic): fix `MultilinearMap.alternatization`
+feat: the category of pointed objects of a concrete category
+feat: Generalize assumptions in liminf and limsup results in ENNReals
+feat: iff theorems for IsSplitEpi and IsSplitMono in opposite category
+feat(Quot): add simple lemmas on function congruence
+chore: remove or tweak outdated comments about 'when X is ported'
+feat(MvPowerSeries/Substitution): substitution of power series inside power series
+feat: checkAsSorry linter
+feat: add some basic term elaborators
+feat: Add fundamental theorem of calculus-2 for Banach spaces
+feat(CategoryTheory/Sites): covering families and their associated Grothendieck topology
+feat: Add ENNReal.floor
+feat(CStarAlgebra): matrices with entries in a C\u22c6-algebra
+feat: two Finset lemmas
+feat(Analysis.Normed.Ring.Seminorm): add SmoothingSeminorm
+feat: port the `Nat.factors` norm_num extension from Mathlib 3
+feat(Valued/LocallyCompact): `totallyBounded_iff_finite_residueField`
+feat: The Marcinkiewicz-Zygmund inequality
+chore(*): deprecate `Option.elim'`
+Track formalization of runtime complexity
+feat: linter for bare `open (scoped) Classical`
+feat(Probability/Kernel): `Kernel.sectL` and `sectR`
+chore(NumberTheory): replace remaining occurrences of open Classical
+chore(GroupTheory/Coset): reduce defeq abuse
+feat(Function): Fixed points of function `f` with `f(x) >= x`
+test make `HasQuotient.quotient'` reducible
+test make `HasQuotient` out put a `setoid`
+Lean pr testing 4938
+perf: use foldl for implementation of Multiset.fold
+feat(Computability): introduce Generalised NFA as bridge to Regular Expression
+feat(Computability/NFA): operations for Thompson's construction
+feat(Computability): language-preserving maps between NFA and RE
+refactor (LinearAlgebra/FreeProduct): move PowerAlgebra construction to its own namespace, minor simp opts
+feat(Combinatorics/SimpleGraph): Some lemmas about walk, cycle and Hamiltonian cycle
+feat(SimpleGraph): The Bondy-Chv\u00e1tal theorem
+feat: Add type class for ENat-valued floor functions
+feat(SetTheory/Game/PGame): Improve `insertLeft` / `insertRight` API
+feat(RingTheory/MvPolynomial/Ideal): introduce new lemmas about MvPolynomial Ideals
+feat: greedy colorings of finite graphs
+Quotients of rings in model theory
+doc(Order/InitialSeg): Improve documentation
+feat: lemmas about the left and right boundary point under `Icc{Left,Right}Chart`
+feat: the real manifold [x,y] has boundary {x,y}
+feat: boundary of a product `M \\times [x,y]`
+feat: define singular `n`-manifolds
+chore(SetTheory/Ordinal/CantorNormalForm): `CNF.exponents` and `CNF.coeffs`
+feat(SetTheory/Ordinal/CantorNormalForm): Coefficients of CNF as finsupp
+feat(CategoryTheory/Monoida): proof producing coherence tactic
+feat: add `ProdQuotientMapSpace`
+feat(SetTheory/Ordinal/Principal): simplify characterization of additively principal ordinals
+feat(SetTheory/Ordinal/CantorNormalForm): alternate CNF recursion principle
+feat: allow several identifiers in assert_not_exists
+feat: Croot-Sisask Almost Periodicity
+feat(SetTheory/Ordinal/Principal): even more lemmas on additively principal ordinals
+feat: compare PR `olean`s size with `master`
+chore(SetTheory/Game/Impartial): remove `Impartial` typeclass
+feat(Algebra/Ring): generalise and extend material about sums of squares and semireal rings
+feat(ModelTheory/Algebra/Ring/Basic): Ring homomorphisms are a `StrongHomClass` for the language of rings
+feat(Dynamics): Hopf decomposition
+feat: representatives for the `FixedDetMatrices` under SL action
+chore: use emoji-variant-selector `\\uFE0F` for emojis \u2705\ufe0f,\u274c\ufe0f,\ud83d\udca5\ufe0f,\ud83d\udfe1\ufe0f
+feat(Archive/Imo): formalize IMO 1982q3
+Clean up quotient APIs
+feat(Tactic/Linter): lint unwanted unicode
+feat(RingTheory): isotypic components
+feat(Geometry/Manifold): orientable manifolds
+chore: deprime `induction, cases` in `Combinatorics`
+feat(CI): check for badly formatted titles or missing/contradictory labels
+chore(Data/Quot): deprecate `ind*'` APIs
+feat(LinearAlgebra/FreeProduct): add induction principle, further simp opts for lift
+refactor(Topology): require `LinearOrder` with `OrderTopology`
+feat: odd_{add,sub}_one
+chore(SetTheory/Ordinal/FixedPointApproximants): golf + better variable management
+feat(Combinatorics/SimpleGraph/Walk): add `penultimate` and `dropLast`
+feat(SetTheory/Ordinal/NaturalOps): characterization of natural operations in base `\u03c9`
+chore: remove TODO relating to #13092
+feat: `QuotLike`
+test use `QuotLike` APIs
+chore: `cases' ... with a a` to `rcases ... with a | a`
+chore: deprecate `Nat.(case_)strong_induction_on`
+chore: move style linters to `Linter/Style`
+chore: `Or 2` automated replacement of `cases'`
+feat: rewrite the linter for spaces before semicolons in Lean
+feat(Analysis/NormedSpace/FunctionSeries): add eventually versions
+feat(Topology/Algebra/InfiniteSum/NatInt): Add pnat lems
+feat(Analysis): summable multipliable
+feat(ModelTheory): A typeclass for languages expanding other languages
+perf: reorder `extends` and remove some instances in algebra hierarchy
+feat: orbits of an irrational rotation are dense
+feat(Dynamics): irrational rotation is ergodic
+feat(RingTheory/Valuation): valuation integers ring is a Principal Ideal ring iff the valuation range is not densely ordered
+chore(Mathlib/Algebra): minimize imports
+feat: partitions of lists
+feat(Data/Fintype/List): generalize `fintypeNodupList` (no `DecidableEq`)
+feat(Analysis/BoxIntegral): Add BoxPartition defined by subdivision of the integer lattice
+chore(scripts/install_macos): Fix 2 PATH resolution issues
+feat(Computability): r.e. sets are closed under inter/union/projection/composition
+feat(Topology/Algebra/Valued/LocallyCompact): locally compact nonarchimedean field iff complete and DVR and finite field
+feat(Analysis/Calculus/Implicit): define HasStrictDerivAt.implicitFunOfBivariate
+feat(Combinatorics/SimpleGraph/Walk): add `penultimate` and `snd`
+feat(Probability/Distributions): formalize Beta distribution
+feat(AlgebraicTopology/Nerve): nerve is 2-coskeletal
+feat(AlgebraicTopology/HomotopyCat): SSet.hoFunctor
+feat(AlgebraicTopology/NerveAdjunction): nerve adjunction, Cat has colimits
+feat(FieldTheory/Differential/Liouville): prove the algebraic case of Liouville's theorem
+feat(ModelTheory/Equivalence): The quotient type of formulas modulo a theory
+feat: define `(a : ENat) ^ (b : ENat)`
+feat: `Finpartition.attachEquiv`
+chore: delete deprecated algebraic structure files
+feat(Data/List/SplitBy): characterization of `List.splitBy`
+feat(ModelTheory/Complexity): define literals
+feat(ModelTheory/Complexity): define conjunctive and disjunctive formulas
+feat(ModelTheory/Complexity): Define conjunctive and disjunctive normal forms
+feat(ModelTheory/Complexity): Normal forms
+feat(Algebra/Group/Action): add definition of equidecomposition
+refactor(Order/Interval/Finset/Nat): supersymmetrise API
+chore(SetTheory/Ordinal/Basic): deprecate `List.Sorted.lt_ord_of_lt`
+feat(FieldTheory/Galois): Lemmas of galois theory
+feat: extend `module` tactic to handle multiple rings, not strictly ordered by inclusion
+feat(Topology/Group): Continuous isomorphism
+feat(SetTheory/ZFC/Ordinal): Alternate characterizations of ordinals
+feat(SetTheory/ZFC/Basic): generalize universes of `range`
+feat(SetTheory/ZFC/Ordinal): von Neumann hierarchy of sets
+feat(GroupTheory/SpecificGroups/Alternating/Centralizer): compute the centralizer of a permutation in the alternating group
+chore(CategoryTheory/Functor/Basic): put `simp` at `Functor.id_comp` 
+chore: add workflow for merging master into bump/v4.x.y branches
+feat(Data/EReal): Add results about `EReal`
+feat: measurability of addition and multiplication on `EReal`
+feat(Data/List/RunLength): run-length encoding
+feat: warn on `autoImplicit true`
+chore: deprecate some lemmas about equality
+chore: remove global `Quotient.mk` `\u27e6\u00b7\u27e7` notation
+feat(Tactic/Linter): add unicode linter for unicode variant-selectors
+feat(Tactic/Linter): add unicode linter for unwanted characters
+feat(Geometry/Manifold): manifolds are locally path-connected
+feat: update the `ContDiff` definition to integrate analytic functions in the hierarchy
+test extends carrier and property
+feat: integrals and integrability with .re 
+feat(RingTheory/PrimaryDecomposition): PIR of Noetherian under jacobson condition
+Eugster/autolabel non master branch
+feat: Decomposing a submodule of a product
+feat(Data/Nat): faster computation of Nat.log
+chore: tidy various files
+feat(Algebra/Category/ModuleCat): pullback of presheaves of modules
+feat(Topology/Baire/BaireMeasurable): add the Kuratowski-Ulam theorem
+feat(Counterexamples/DiscreteTopologyNonDiscreteUniformity): add a counterexample about discrete uniformity and Cauchy filters
+refactor: make `CanonicallyOrdered...` mixin
+refactor(Algebra/Group): make `IsUnit` a typeclass
+chore: remove confounding coercions from `Submodule.(co)map`
+feat: Define shifted Legendre polynomials and prove some basic properties
+feat(Analysis/Convex): extreme points of doubly stochastic matrices
+perf: do not need `simp low` now
+feat: lint on declarations mentioning `Invertible` or `Unique`
+feat: the `metrisableSpace` linter
+feat(GroupTheory/Perm/Centralizer): study the centralizer of a permutation
+feat(scripts/autolabel): add `dependency-bump` label automatically
+feat(Algebra/MvPolynomial/Degrees): degreeOf_mul_X_eq_degreeOf_add_one_iff
+feat: lint declarations which contain a double underscore
+feat: Sym2-as-Finset theory
+feat(Order/Bounds/Basic): Add basic order lemmas
+feat: Count the number of pairs of `Nat`s whose `lcm` is `n`
+feat(Algebra/Order/GroupWithZero/Unbundled): add some lemmas
+feat(Algebra/Order/GroupWithZero/Unbundled): generalize lemmas
+chore(Tactic/Polyrith): remove polyrith dependency on Python
+feat: universal properties of vector bundle constructions
+feat: add a script to check for PR title and labelling
+feat: `norm_num` plugin for `Nat.log`
+chore: remove lines labelled as not required
+refactor: turn `IsTorsionFree` into a typeclass
+perf: do not search algebraic hierarchy when searching `FunLike` hierarchy
+feat: the unusedVariableCommand linter
+feat: notation for Euclidean space
+feat(Topology/Order/DenselyOrdered): prove Not (IsOpen) for intervals
+feat(SetTheory/Ordinal/ENat): `Ordinal.toENat`
+feat(CategoryTheory/Limits/Sifted): characterization of sifted categories
+feat(SetTheory/Ordinal/Veblen): epsilon and gamma ordinals
+feat(SetTheory/Cardinal/Arithmetic): cardinality of ordinal exponential
+feat: family of kernels consistent with respect to a filtration
+feat(SetTheory/Ordinal/Notation): tweak instances
+chore(SetTheory/Ordinal/Notation): use `NatCast`
+feat: Hopkins\u2013Levitzki theorem
+refactor: introduce `Ideal.IsTwoSided` class for quotients of noncommutative rings
+feat(CategoryTheory/Monoidal): composition of monoidal category adjunctions
+refactor(SetTheory/*/Univ): redefine `Cardinal.univ`
+feat(CategoryTheory/Bicategory/Grothendieck): functors between Grothendieck constructions induced by strong natural transforms
+feat: the `#find_syntax` command
+feat(MeasureTheory/Measure/MutuallySingular): Disjoint iff mutually singular
+doc: factorial notation docstring
+feat: Hoeffding's lemma
+refactor: add a `ContinuousSqrt` class to conclude `StarOrderedRing C(\u03b1, R)`
+feat(Topology/Algebra/Field): `ContinuousSMul` for intermediate fields
+feat(Topology/EMetricSpace/Basic): add boundedness lemmas
+feat(Analysis/Normed/Group/SeparationQuotient): add normed lifts and `mk`
+feat(Algebra): define `PrimitiveIdempotents`
+feat(Algebra/Category/ModuleCat): the pseudofunctors which send a ring to its category of modules
+chore: refactor algebraic filter bases
+chore(SetTheory/Ordinal/Basic): golf/clean up `Cardinal.ord` theorems
+chore(SetTheory/Ordinal/Basic): deprecate results on `WellOrder`
+feat(Order/Hom/Basic): `WithBot (Fin n) \u2243o Fin (n + 1)`
+feat: `scoped[NS]` for more commands
+feat(SetTheory/Ordinal/Basic): notation `typeLT \u03b1 = type (\u03b1 := \u03b1) (\u00b7 < \u00b7)`
+refactor(Order/WellFounded): deprecate `WellFounded.succ`
+chore(SetTheory/ZFC/Rank): clean up file
+feat(Bicategory/Oplax): Fix simp lemmas and renaming
+feat(Bicactegory/NaturalTransformation): refactor strong natural transformations
+feat(Bicategory/Modification/Pseudo): define modifications between strong natural transformations of pseudofunctors
+feat: Second-derivative test from calculus
+perf: make `Mul.toSMul` higher priority
+feat(Topology/Compactification): projective line over \u211d is homeomorphic to the one-point compactification of \u211d
+chore(Filter/Prod): drop `Filter.prod`, use `SProd` instead
+feat(Topology/ENNReal): Add `ENNReal.tsum_biUnion`
+feat(Algebra/Module): presentation of the restriction of scalars of a module
+feat: the Lie algebra of a Lie group over R or C
+chore: Rename `RestrictGenTopology` to `Topology.IsRestrictGen`
+refactor(LinearAlgebra/SesquilinearForm): Hermitian sesquilinear maps
+feat(CategoryTheory/Enriched): functoriality of the enrichment of functor categories
+feat(RingTheory): the residue field of a prime ideal
+refactor: generalize `SMul (Ideal R) (Submodule R M)` to `SMul (Submodule R A) (Submodule R M)`
+feat(Algebra/Module): presentation of the tensor product
+chore(IsAlgClosed/Classification): Make theorems more universe polymorphic
+refactor: add refactored APIs for algebraic filter bases
+refactor: adapt `KrullTopology` to the new algebraic filter bases API
+refactor: use new algebraic filter bases API in `FiniteAdeleRing`
+feat(Algebra/Module): a presentation of an algebra induces a presentation of the module of differentials
+refactor(AdicTopology): use new API for algebraic filter bases, and factor some code
+chore(Computability/TuringMachine): split `TuringMachine.lean`
+chore(Filter/Bases): split
+feat: left and right common multiples mixins
+feat(SetTheory/Ordinal/Notation/FundamentalSequence): define type of fundamental sequences
+perf: lower the priority of `toMul` and `toAdd` instances
+perf: lower the priority of `Ordered*.to*` instances
+chore(SetTheory/Game/PGame): deprecate primed lemmas
+perf: lower the priority of `Normed*.to*` instances
+perf: lower the priority of `Comm*.to*` instances
+perf: lower the priority of `*WithOne.to*` instances
+feat(Analysis/PolarCoord): add versions for Lebesgue integral
+feat(Algebra/Homology): the stupid truncation of homological complexes
+feat(Algebra/Homology): the left homology of an extension of homological complexes
+refactor: generalize results about `LinearIndependent` to `Semiring`
+feat: approximate units in C\u22c6-algebras
+chore(OperatorNorm/Completeness): drop a duplicate instance
+feat(CategoryTheory/Abelian/GrothendieckAxioms): introduce grothendieck categories
+refactor(AlgebraicGeometry/EllipticCurve/*): add `WeierstrassCurve.IsElliptic` and remove `EllipticCurve`
+feat(LinearAlgebra/PiTensorProduct): dependent version of tmulEquiv
+feat: uncountable instances for `Ordinal` and isomorphic types
+feat: `Countable` deriving handler
+feat(RingTheory/Invariant): Define invariant extensions of rings
+feat(Algebra/FreeMonoid): free monoids over isomorphic types are isomorphic
+feat: `Encodable` deriving handler
+feat(LinearAlgebra/QuadraticForm/Basis): basis expansion of a quadratic map
+feat(LinearAlgebra/ExteriorPower): the universal property of the exterior power
+chore(RingTheory/Ideal/Colon): generalize to semiring
+feat(Combinatorics/SimpleGraph): add independent sets
+feat(SetTheory/Ordinal/Veblen): the two-argument Veblen function
+feat: add `NonUnital{Star}Algebra.elemental` subalgebras
+feat : define Artin braid groups
+feat(Computability.Timed): Formalization of runtime complexity of insertion sort
+feat(Computability.Timed): Formalization of runtime complexity of List.merge
+feat(Computability.Timed): Formalization of runtime complexity of List.mergeSort
+Test/latest import report dev
+base of #18472
+perf: change the priority of `*.toRing` instances
+base of #18641
+feat(RingTheory): isotypic components
+refactor(LocalRing/Basic): generalize to non-commutative (semi)rings
+feat: add leftmost derivation in context free grammar
+feat(Combinatorics/SimpleGraph): Add definitions and theorems about the coloring of sum graphs
+feat(Topology): Introduce HomeomorphClass
+feat: add ConjRootClass
+feat(Data/Nat/Defs): Add a commuted version of `Nat.le_div_iff_mul_le'`
+feature(Algebra/Module/NestAlgebra): Nest algebras
+feat: One-point compactification of Euclidean space homeomorphic to sphere
+chore: add location of build.in.yml to directories checked by dependabot
+doc: update README.md instructions for building documentation locally
+perf: lower the priority of `SemilinearMapClass.toAddHomClass`
+feat(RingTheory/GradedAlgebra): define homogeneous submodule
+refactor: deprecate `ContinuousLinearMapClass`
+feat(ModelTheory): preparation work for proving existence of fraisse limits
+feat: `IsometryClass`
+refactor: deprecate `LinearIsometryClass`
+refactor: deprecate `DistribMulActionSemiHomClass` `MulSemiringActionSemiHomClass`
+feat: define Descriptive.Tree
+feat(Algebra/Subalgebra): some lemmas about centralizers
+chore: changing `outParam` of `MulActionSemiHomClass`
+feat: `List.rget` and related lemmata
+feat(MeasureTheory/Integral/RieszMarkovKakutani) prove that the Riesz content is indeed a content for `NNReal`
+feat(SetTheory/Cardinal/Arithmetic): omega ordinals are additively/multiplicatively principal
+feat(SetTheory/Ordinal/Arithmetic): `(sInf s\u1d9c).card \u2264 #s`
+feat(AlgebraicGeometry) use `addMorphismPropertyInstances`
+feat(CategoryTheory): command that generates instances for `MorphismProperty`
+feat(RingTheory/Valuation/Basic): API for conversion `AddValuation` \u2194 `Valuation`
+chore(Algebra/Lie/Weights): rename Weight to GenWeight
+Lean pr testing 5948
+feat (RingTheory/HahnSeries/Summable) add pointwise product operation
+Lean pr testing 6019
+refactor: deprecate `MulEquivClass`
+feat(Data/Control/Traversable/Instances): Add (Lawful)Traversable instance for Tree
+feat: Goursat's lemma for subgroups
+feat(Data/Nat/Nth): `nth_add_one`
+feat: manifold derivative of operations in vector spaces
+refactor: make `Set.mem_graphOn` defeq
+feat(ModelTheory/Fraisse): add proof that Fra\u00efss\u00e9 limits exist
+feat(Data/Set): add result that shows a set is even iff it splits into two sets of equal cardinality
+feat:Polynomial FLT
+doc(overview): combinatorics overview
+feat(EReal): add `toENNReal`
+feat(Order/InitialSeg): `InitialSeg.exists_relIso_sum`
+feat(SpecialFunctions/Log): more continuity and limits for logb
+feat: add `mul_min` and `min_mul`
+feat(SetTheory/Cardinal/Arithmetic): miscellaneous cardinality lemmas
+feat: drop finite-dimensionality assumption from `PerfectPairing.restrictScalarsField`
+feat(AlgebraicGeometry): the small site associated to a morphism property
+chore(Topology): move homeomorph
+feat(Algebra/Order/AddGroupWithTop): lemmas about LinearOrderedAddCommGroupWithTop
+feat: `gcongr` lemmas for `Additive`/`Multiplicative`
+chore(scripts/zulip_emoji_merge_delegate.py): scan more messages and channels
+feat: relate lists and infinite sequences
+feat: ind-objects are closed under products
+feat: sup-closed sets are closed under finite suprema
+feat: lower bound on the Ruzsa-Szemer\u00e9di problem
+feat(GroupTheory/Subgroup/Centralizer): The `N/C` theorem
+chore(Util/Superscript): use `register_parser_alias`
+feat(Algebra/BigOperators/Fin): Add `finSigmaFinEquiv`
+chore(Data/Set/Basic): remove redundant redeclarations
+feat(Algebra/Category/ModuleCat/Products): show that arbitrary coproducts agree with direct sum
+feat: `f '' s\u1d9c = range f \\ f '' s` when `f` is injective
+chore(Data/Set): split the `CoeSort` instance to its own file
+refactor(Probability.Martingale.BorelCantelli): move and simplify lemmas about indicators
+feat: add option `pp.mathlib.binderPredicates`
+chore (ModelTheory/Fraisse): simplify IsFraisse definition
+feat(RingTheory/Localization/Defs): localization of a direct product injects into product of localizations
+feat: define class `SemigroupAction`
+feat(CategoryTheory/SmallObject/Iteration): existence of objects (bot and succ cases)
+feat(Order/InitialSeg): initial segments preserve successor limits
+refactor(SetTheory/Ordinal/Arithmetic): redefine `IsLimit` to `IsSuccLimit`
+Test precompilation (batteries + aesop) again
+feat(Topology/FiberBundle/Trivialization): local lifting through a Trivialization
+feat(AlgebraicTopology/SimplicialSet): StrictSegal simplicial sets are 2-coskeletal
+feat(Algebra/Order/SuccPred): `IsSuccLimit` theorems for `SuccAddOrder`
+feat (Algebra/PresentedMonoid/Basic) : facts about rel
+feat(SetTheory/Ordinal/Nimber/Field): Nimber division
+feat(RingTheory): Jacobi-Zariski sequence
+feat: prove Dini's theorem for uniform convergence
+feat: adjoining identity matrices to TU matrices
+feat(SkewMonoidAlgebra): `coeff`, `single`, `one` and `sum`
+feat(RingTheory/LocalProperties): flatness is a local property
+chore(Data/Finsupp): split off material on `single`, `update`, `erase`
+chore(Algebra/MonoidAlgebra): split Defs.lean further
+chore(Data/Finsupp): split off extensionality from `Defs.lean`
+chore(Algebra.Polynomial): split `Polynomial/Basic.lean` into smaller files
+feat: a fan is limit iff it is after the application of coyoneda.obj X
+refactor: allow `deriv` to be used on topological vector spaces
+chore: allow Module over Semiring be Flat
+feat: stop `ring`/`abel` from seeing algebraic operations inside `let`s
+feat(Algebra/Order/Monoid/Unbundled/WithTop): add lemmas about `WithTop.map` and `WithBot.map`
+fead: Add `lift_unique`, `lift_unique'` to `IsFractionRing`
+feat: add theorems to transfer `IsGalois` between pairs of fraction rings
+feat: `#trans_import` shows the imports of the current module
+feat: `isCoprime_mul_units_left`, `isCoprime_mul_units_right`
+feat(RingTheory/Ideal/Over): define the set of all prime ideals that lie over an ideal
+chore(SetTheory/Ordinal/Exponential): redefine ordinal exponential without `bsup`
+feat: Polynomial.isRoot_of_isRoot_iff_dvd_derivative_mul
+feat: add `ENat.map` and lemmas
+feat(Order/Bounds/Lattice): Bounds over collections of sets
+feat: coproducts in the category of Ind-objects
+feat(Polynomial): bounding the coefficients of `modByMonic`/`divByMonic`
+Add `toWithTop`, `ofWithTop`
+feat(Analysis/Convex/Topology): closure of interior and interior of closure for a convex set
+test: the findDefEqAbuse linter
+feat: add Nat.digits_base_pow_mul and Nat.digits_append_zeroes_append_digits
+feat(GroupTheory/SpecificGroups/Cyclic): Cardinality of automorphism group
+feat(SetTheory/Ordinal/Arithmetic): order isomorphism between omega and the natural numbers
+refactor: make `LinearOrderedCommMonoidWithZero` extend `OrderBot`
+feat(Algebra/Homology): the homology of an extension of homological complexes
+feat(CategoryTheory): expand the API for AB axioms
+feat(Algebra/Homology): API for the homology of an extension of homological complex
+chore(Data/Finsupp): split off basic scalar multiplication
+feat(LinearAlgebra): add a variable_alias for VectorSpace
+feat(Algebra/Category): `Under.pushout f` is left-exact if `f` is flat.
+feat: expand API for `CFC.posPart`
+feat(Order/Directed): DirectedOn and products
+fix(CI): unwrap `lake test` in problem matcher
+feat: add bundled multiplication maps for matrices
+refactor(Algebra/Bilinear): generalize to non-commutative base rings
+refactor(SetTheory/Ordinal/NaturalOps): redefine natural addition without `blsub`
+chore(SetTheory/Ordinal/NaturalOps): address porting notes
+refactor(Nat.Prime.Defs): use `csimp` for `Nat.decidablePrime`
+feat: generalize `Ideal.spanNorm` to allow non free extensions
+feat: interaction of `Finset.sup` and `Nat.cast`
+feat: `MulLeftMono` implies `PosMulMono`
+feat(Combinatorics/SimpleGraph/Matching): add `IsCycles` and `IsAlternating` with basic results
+feat: `S ^ n = S` where `S` is a submonoid
+doc(SetTheory/ZFC/Ordinal): add docstrings to lemmas on transitive sets
+feat(CategoryTheory): pushforward pullback adjunction for `P.Over Q X`
+fix: if nolint files change, do a full rebuild
+chore(Algebra/{MonoidAlgebra,Polynomial}): dedicated file for algebra structure
+add a variable_alias for Quantale and AddQuantale
+feat(to_additive): option to not translate operations on a type
+fix(to_additive): automatically translate all instances generated by `extends`
+feat(RingTheory/Polynomial/Hilbert): the definition of the Hilbert polynomial in terms of a natural number `d` and a polynomial `p : \u2124[X]`
+feat(CategoryTheory/MorphismProperty): classes of morphisms that are stable under transfinite compositions
+feat(LinearAlgebra/Matrix/Permanent): smul
+feat(Finsupp/Fin): Add `Finsupp` operations on `Fin` tuples
+Test importing topology in ordinal
+chore: change associativity of `+\u1d65` from `infixl` to `infixr`
+test: rebuild modifying lint
+style(Computability/ContextFreeGrammar/reverse): injective and surjec\u2026
+feat(CategoryTheory): construction of sections of functors by transfinite induction
+feat(Data/Finsupp): generalise `Finsupp` to any \"zero\" value
+chore: split out Algebra.GroupWithZero.Nat
+feat(LinearAlgebra/RootSystem/Finite): Coxeter weights are bounded above by 4
+feat: the pullback of a vector field in a vector space
+feat: locally compact manifolds are finite-dimensional
+test: try emoji action
+chore(RingTheory): split up `Algebraic.lean`
+find defeq abuse using diagnostics
+feat(Combinatorics/SimpleGraph/Path): add `IsPath.getVert_injOn`
+chore: avoid importing `ContDiff.Defs` in `FDeriv.Analytic`
+chore(Algebra/Polynomial): don't import `Ideal` when defining `Polynomial.roots`
+feat(Combinatorics/SimpleGraph): add lemmas about `spanningCoe`
+feat: Explanation widgets
+refactor(lint-style): make sure to read the nolints file outside of t\u2026
+chore: make map_ofNat a simp lemma
+feat: prove `zmodRepr` is unique
+feat(SetTheory/Game/PGame): down and up games
+feat(Algebra/Ring/Parity): Add lemma `odd_add_self_sub_one`
+feat(GroupTheory): some lemmas about blocks
+chore: rename `forall_image2_iff` to `forall_mem_image2`
+feat(RingTheory/Polynomial/Hilbert): given a natural number `d` and a polynomial `p : \u2124[X]`, proved the key property of the Hilbert polynomial in terms of `d` and `p`
+feat: `{a, b} * s = a \u2022 s \u222a b \u2022 s`
+feat: `(t \\ s).ncard = t.ncard - s.ncard` in a ring
+feat: `Polynomial.map f` strictly decreases the degree if `f p.leadingCoeff = 0`
+feat: growth of a finset in the quotient and intersection with a subgroup
+chore: move results on `\u03a3 i : Fin n, f i` earlier
+chore(SetTheory/Game/Ordinal): make `Ordinal.toGame` an order embedding
+feat(AlgebraicGeometry): integral = universally closed + affine
+chore(*): fix `initialize_simps_projections` commands
+chore: gcongr forward-reasoning adjustment
+feat(AlgebraicGeometry): scheme-theoretic fibre
+feat(Topology/Compactness): delta-generated spaces
+feat(LinearAlgebra/QuadraticForm/Basis): Free Tensor product of Quadratic Maps
+feat(SetTheory/Game/PGame): dicotic pregames
+feat: an equality condition for AM-GM inequality
+chore: move unitsEquivNeZero later
+feat(MeasureTheory): integrability lemmas
+feat(Order/Nucleus): Nucleus
+chore(Analysis/Multilinear): avoid explicit `variable`s
+feat(RingTheory/MvPolynomial/Groebner): division algorithm wrt monomial orders
+feat(Data/Finsupp/MonomialOrder/DegLex): homogeneous lexicographic order
+feat(Data/Finsupp/MonomialOrder/DegRevLex): homogeneous reverse lexicographic order
+feat(/Data/Fin/VecNotation): remove simp from `vecCons_const`
+feat: left division by a nonzero element as a `Perm`
+chore: rename `div_div_cancel'` to `div_div_cancel\u2080`
+chore(AdicCompletion): generalise algebra instance to separate rings
+feat(MvPolynomial/Equiv): Add `MvPolynomial.finSuccEquiv'`
+chore(NumberTheory/Fermat): fix theorem names
+feat: more lemmas about monovarying functions
+feat(Order): maximal chains are preserved under order isomorphisms
+feat(NumberTheory/Padics): Mahler's theorem on continuous p-adic functions
+feat: group markings
+feat: `stab s \u2293 stab t \u2264 stab (s \u2229 t)`
+chore(MetricSpace): don't use `{}` in binders
+feat(NumberTheory/ModularForms/LevelOne)
+feat(Probability): identity, copy, discard and swap kernels
+feat(Probability): parallel composition of kernels
+feat(CategoryTheory/Enriched/Opposite): the opposite category of an enriched category
+chore: move definition of ENat and PNat out of Order.TypeTags
+feat(RingTheory): `HomogeneousLocalization.awayMap` is a localization
+chore: adaptation to batteries#1055
+feat(CategoryTheory): coskeletal simplicial objects
+feat: add `Submonoid.mem_closure_range_iff`
+feat: semiring with discrete PrimeSpectrum
+feat(Topology/Category): category of delta-generated spaces
+feat(Algebra/GradedMonoid): add `prod_mem_graded`
+chore(GroupTheory/FreeGroup): split off `Reduce.lean`
+chore: update Mathlib dependencies 2024-11-26
+feat(Nat): `m / n = 0 \u2194 n = 0 \u2228 m < n`
+chore: adaptations for nightly-2024-11-26
+feat(Algebra): ULift \u2124 is initial in the category of commutative rings
+feat(Multiset/Fintype): `Multiset.ToType` equivalence between `v ::\u2098 m` and `Option m`
+feat: relation of covering by cosets
+refactor(CategoryTheory/Sites): remove SheafOfTypes
+refactor(Algebra/Category/ModuleCat): make `ModuleCat.Hom` a structure
+feat(Combinatorics/Additive): characterise sets with no doubling
+feat: add congruences of subtypes and sets/finsets.
+feat(Topology/Algebra): add `IsModuleTopology.continuous_of_ringHom`
+refactor(CategoryTheory/Sites): define Functor.sheafPullback as a left adjoint
+feat(CategoryTheory/Sites): helper definitions for sieves
+chore(Submonoid/Subgroup): rename `subtype_range` to `range_subtype`
+chore(CategoryTheory/Sites): split DenseSubsite
+refactor(Algebra/Module): Redefine `LocalizedModule` in terms of `OreLocalization`
+feat: zulip emoji reactions on public and `mathlib reviewers` channels
+refactor(LinearAlgebra/Matrix/GeneralLinearGroup): Redefine `Matrix.SpecialLinearGroup.toGL`and remove duplicate `toLinear`
+fix: build cache issues
+chore: better error message in linarith
+perf: preprocess tc instances to avoid nested tc
+feat: derive Infinite automatically for inductive types
+feat: #formalize, backed by a choice of LLMs
+feat: ListM.parallelMap
+feat: run library_search when the cursor is at a sorry
+refactor: create HasAdj class, define Digraph, and generalize some SimpleGraph API
+feat: Backtrack minimize
+feat: ExprWithLevels
+feat: AppBuilder utils
+feat: define the additive submonoid of positive elements in a star ordered ring
+chore: use `open scoped`
+doc(Data/Nat/Bitblast): initial commit
+feat(Tactic/Prune + test/Prune): add `prune` tactic, for removing unnecessary hypotheses
+feat(Algebra/MvPolynomial): Schwartz-Zippel lemma
+feat: `wlog ... replacing`
+feat: a tactic to consume type annotations, and make constructor nicer
+feat: add elaborators for concrete matrices
+feat: add a `MonadError` instance for `ContT`
+feat: more `PGame.identical` `PGame.mem\u2097` `PGame.mem\u1d63` APIs
+feat: port Data.Rat.MetaDefs
+feat: add Qq wrappers for ToExpr
+feat: add APIs about `Quotient.choice`
+feat(Analysis.SpecialFunctions.Gaussian): add `integrable_fun_mul_exp_neg_mul_sq`
+feat (Mathlib.Tactic.FieldSimp) : discharger uses normCast
+fix: deduplicate variables
+chore(RingTheory/TensorProduct): golf the `mul` definition
+Dimension theory
+refactor(CategoryTheory/Monoidal): add whiskering operators
+chore: change instance priorities of `Ordered*` hierarchy
+feat: functions with finite fibers
+refactor(LinearAlgebra/Span): replace \u2219 with \u2022 as notation for `span R {x}`
+chore(Mathlib/Algebra/Hom/GroupAction): add `SMulHomClass.comp_smul`
+feat: discrete Fourier transform of a finite sequence
+refactor: make charP_to_charZero an instance
+chore: `move_add`-driven replacements
+feat(Algebra/MonoidAlgebra/NoZeroDivisors): `NoZeroDivisors` instance on `AddMonoidAlgebra`s
+feat(..Polynomial..): `MvPolynomial`s have no zero divisors
+feat: disjoint indexed union of local homeomorphisms
+chore(Co*variantClass): replace eta-expanded (\u00b7 * \u00b7), (\u00b7 + \u00b7), (\u00b7 \u2264 \u00b7), (\u00b7 < \u00b7)
+refactor: Use flat structures for morphisms
+refactor(Analysis/Normed*): use `RingHomIsometric` for `*.norm_cast`
+feat : lemmas about `AddMonoidAlgebra.{divOf, modOf}`
+chore: cleanup of `trans` tactic
+feat: toMonoidHom_coe
+refactor: separate out `PGame.relabelling`
+feat: Equivs for AddMonoidAlgebras
+some random stuff
+chore: refactor of AtomM
+feat: synthetic geometry
+chore: use preimageIso instead of defeq abuse for InducedCategory
+feat(Topology/Algebra/Order): extend function on `Ioo` to `Icc`
+feat(Topology/MetricSpace/Congruence): define Congruent
+feat(Topology/MetricSpace/Similarity): define Similarity
+feat: APIs of `Function.extend f g e'` when `f` is injective
+feat(Topology/Algebra/Order): extend strictly monotone function on `Ioo` to homeomorphism on `Icc`
+feat(Topology/Algebra/Order): extend homeomorphism of `Ioo` to `Icc`
+feat: covering maps from properly discontinuous actions and discrete subgroups
+feat: ring hom support in `ring`
+chore(LinearAlgebra/Basic): generalize compatibleMaps to semilinear maps
+feat: add_left/right_inj for measures
+testing: lean4#2712
+testing: lean4#2728
+feat(LinearAlgebra/Matrix): `lift` for projective special linear group
+testing: bench nightly testing for lean4#2712
+chore: rename `Pi.fintype` to `Pi.instFintype`
+feat(Geometry/Hyperbolic/UpperHalfPlane): instance IsometricSMul PSL(2, \u211d) \u210d
+perf: reorder `extends` and change instance priority in algebra hierarchy
+chore: make `IsScalarTower A A B` and `IsScalarTower A B B` higher priority
+chore: make `SMulCommClass A A B` and `SMulCommClass A B B` higher priority
+feat: real manifolds are locally path-connected
+feat(Mathlib/Tactic/Setm): implement setm tactic
+feat: define `UnboundedSpace`
+feat: introduce `NthRoot` notation class
+refactor(Algebra/TrivSqZeroExt): replace with a structure
+chore: generalize `LieSubalgebra.mem_map_submodule`
+refactor: Homotopy between Functions not ContinuousMaps
+refactor(Util/Delaborators): remove `scoped` from delabPi'
+feat: add support for other types in norm_num
+feat (Tactic): add unify_denoms and collect_signs tactics
+feat(CategoryTheory): add dinatural transformations
+feat: Add new `grw` tactic for rewriting using inequalities.
+feat: Define simplicial homotopy and prove conditions for equivalence relation
+feat(Asymptotics): define `ReflectsGrowth`
+feat: `refine?`
+refactor(Analysis/NormedSpace/Exponential): remove the `\ud835\udd42` argument from `exp`
+feat: run `hint` tactics in parallel
+chore(MeasureTheory): Golf, speed up
+feat(AlgebraicGeometry/EllipticCurve/Projective): implement group law for projective coordinates
+feat: meta utils for `refine?`
+refactor(MeasureTheory/Measure/Haar/Basic): partially generalize to the affine case
+refactor(LinearAlgebra/TensorProduct): golf using `liftAddHom`
+characteristic predicate of tensor product
+wip
+chore: bench lean4#2944
+feat(Algebra/FreeAlgebra): add right action and `IsCentralScalar`
+feat: support right actions for `Con`
+Add `NormedSpace.Alternating`
+feat: differential of a local diffeomorphism is a continuous linear equivalence
+fix: improve `recall` impl / error reporting
+refactor(Cache): tidy lake-manifest parsing in Cache
+feat(Algebra/Module/GradeZeroModule): if `A` is a graded semiring and `M` is a graded `A`-module, then each grade of `M` is a module over the 0-th grade of `A`.
+feat(RepresentationTheory/GroupCohomology/Hilbert90): add Hilbert's original theorem 90
+feat: add `norm_num` extensions for factorials
+feat: add some missing lemmas about linear algebra
+feat(Computable): define P, NP, and NP-complete
+wip: refactor `FunLike` to take in a coercion explicitly
+Add `by_approx` tactic for proving real inequalities using rational approximation
+refactor: use the coinduced topology on ULift
+feat: `List.destutter` on cotransitive relations.
+feat: `Polynomial.coeffList`
+feat(Algebra/Algebra/Prod): add prodUnique and uniqueProd for LinearEquiv and AlgebraEquiv
+feat(Data/Fin/Basic): Refactor succAbove and predAbove.
+feat(Data/ZMod/Defs): Topological structure on `ZMod`
+feat: `npow` / `nsmul` / `Nat.cast`/ `zpow` / `zsmul` implemented using `Nat.binaryRec`
+feat: extended charts are local diffeomorphisms on their source
+feat (RingTheory/GradedAlgebra/HomogeneousIdeal): given a finitely generated homogeneous ideal of a graded semiring, construct a finite spanning set for the ideal which only contains homogeneous elements
+feat: Naturality of integral curves
+feat: Add `AddGroup.FG` -> `Module.Finite \u2124` as instances
+feat: arithmetic lemmas for `gradient`
+feat: monotonicity of gradient on convex real-valued functions
+feat: assumption?
+feat: Various instances regarding `\ud835\udcde K`.
+feat: Add Turing machine with the quintet definition (TMQ) and a chainable step function for each TM type
+refactor(Analysis/Calculus/FormalMultilinearSeries): generalize to additive monoids
+feat: maximum modulus principle for functions vanishing at infinity
+fix(Data/Fin/Tuple/Basic): Refactor snoc and cons proofs.
+feat(Analysis/Complex): HasPrimitives on disc
+feat(Data/Finset & List): Add Lemmas for Sorting and Filtering
+chore: move some code out of Init.Data.Nat.Lemmas
+feat(FieldTheory/LinearDisjoint): definition and basic properties of linearly disjoint of fields
+feat: add `@[mk_eq]` version of `@[mk_iff]`
+chore(Analysis): rename `closedUnitBall` and `closed_unit_ball` to `unit_closedBall`
+feat: the type `Fib` of fibre of a function at a point
+feat(RingTheory/GradedAlgebra/HomogeneousIdeal): generalize to homogeneous submodule
+feat(AlgebraicTopology): add constructors for horns
+feat: polynomials formed by lists
+chore(FieldTheory/KummerExtension): move some lemmas earlier",
