@@ -513,7 +513,23 @@ lemma ContMDiff.sum_map {f : M → N} {g : M' → N'}
   ContMDiff.sum_elim (ContMDiff.inl.comp hf) (ContMDiff.inr.comp hg)
 
 -- in fact, have an iff, but the other direction is easy :-)
-lemma bar {f : M → N} (h : ContMDiff I J n ((@Sum.inl N N') ∘ f)) : ContMDiff I J n f := sorry
+lemma bar {f : M → N} (h : ContMDiff I J n ((@Sum.inl N N') ∘ f)) : ContMDiff I J n f := by
+  let anything : N := sorry
+  let aux : N ⊕ N' → N := Sum.elim (@id N) (fun _ ↦ anything)
+  have haux : ContMDiffOn J J n aux (Sum.inl '' univ) := by
+    -- idea: on that set, aux is the identity, which is smooth
+    -- different idea: can I prove this separately, as "half" of ContMDiff.sum_elim,
+    -- and re-use it here?
+    -- apply ContMDiffOn.congr (f := Sum.elim_inl)
+    sorry
+  rw [← contMDiffOn_univ] at h ⊢
+  have : f = aux ∘ (@Sum.inl N N') ∘ f := by aesop
+  rw [this]
+  have missing : univ ⊆ (Sum.inl ∘ f) ⁻¹' (@Sum.inl N N' '' univ) := by
+    intro x _hx
+    rw [mem_preimage, Function.comp_apply]
+    use f x, trivial
+  exact ContMDiffOn.comp haux h missing
 
 -- in fact, have an iff, but the other direction is easy :-)
 lemma baz {g : M' → N'} (h : ContMDiff I J n ((@Sum.inr N N') ∘ g)) : ContMDiff I J n g := sorry
