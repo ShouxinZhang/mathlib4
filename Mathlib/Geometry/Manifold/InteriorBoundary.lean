@@ -5,6 +5,7 @@ Authors: Michael Rothgang
 -/
 
 import Mathlib.Geometry.Manifold.IsManifold
+-- TODO: move the smoothness results to a different file, then adjoint this import accordingly!
 import Mathlib.Geometry.Manifold.ContMDiffMap
 
 /-!
@@ -507,9 +508,20 @@ lemma ContMDiff.sum_elim {f : M → N} {g : M' → N}
     --sorry
   sorry
 
--- actually, want an iff version here...
-lemma ContMDiff.sum_map {n : ℕ∞} [Nonempty H'] {f : M → N} {g : M' → N'}
-    (hf : ContMDiff I J n f) (hg : ContMDiff I J n g) : ContMDiff I J n (Sum.map f g) := sorry
+lemma ContMDiff.sum_map {f : M → N} {g : M' → N'}
+    (hf : ContMDiff I J n f) (hg : ContMDiff I J n g) : ContMDiff I J n (Sum.map f g) :=
+  ContMDiff.sum_elim (ContMDiff.inl.comp hf) (ContMDiff.inr.comp hg)
+
+-- in fact, have an iff, but the other direction is easy :-)
+lemma bar {f : M → N} (h : ContMDiff I J n ((@Sum.inl N N') ∘ f)) : ContMDiff I J n f := sorry
+
+-- in fact, have an iff, but the other direction is easy :-)
+lemma baz {g : M' → N'} (h : ContMDiff I J n ((@Sum.inr N N') ∘ g)) : ContMDiff I J n g := sorry
+
+lemma contMDiff_sum_map {f : M → N} {g : M' → N'} [Nonempty N'] :
+    ContMDiff I J n (Sum.map f g) ↔ ContMDiff I J n f ∧ ContMDiff I J n g :=
+  ⟨fun h ↦ ⟨bar (h.comp ContMDiff.inl), baz (h.comp ContMDiff.inr)⟩,
+    fun h ↦ ContMDiff.sum_map h.1 h.2⟩
 
 -- my bordism theory branch has a bunch of corollaries about diffeomorphisms now
 
