@@ -10,7 +10,7 @@ import Mathlib.Combinatorics.SimpleGraph.SubgraphIso
 /-!
 # Extremal graph theory
 
-This modules introduces basic definitions of extremal graph theory, including extremal numbers.
+This file introduces basic definitions for extremal graph theory, including extremal numbers.
 
 ## Main definitions
 
