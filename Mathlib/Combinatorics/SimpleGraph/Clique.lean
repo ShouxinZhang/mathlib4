@@ -8,6 +8,7 @@ import Mathlib.Combinatorics.SimpleGraph.Operations
 import Mathlib.Data.Finset.Pairwise
 import Mathlib.Data.Fintype.Powerset
 import Mathlib.Data.Nat.Lattice
+import Mathlib.Order.Minimal
 
 /-!
 # Graph cliques
@@ -242,25 +243,6 @@ lemma IsNClique.insert_erase (hs : G.IsNClique n s) (had: ∀ w ∈ s, w ≠ b �
     apply (hs.erase_of_mem hb).insert
     intro w h; rw [mem_erase] at h
     apply had w h.2 h.1
-
-lemma IsNClique.insert_insert (h1 : G.IsNClique n (insert a s))
-(h2 : G.IsNClique n (insert b s)) (h2' : b ∉ s) (hadj : G.Adj a b) :
-    G.IsNClique (n + 1) (insert b ((insert a) s)) := by
-  apply h1.insert
-  intro b hb
-  obtain (rfl | h):=mem_insert.1 hb
-  · exact hadj.symm
-  · apply h2.1
-    · simp
-    · simp [h]
-    · rintro rfl; contradiction
-
-lemma IsNClique.insert_insert_erase (hs: IsNClique G (n + 1) (insert a s)) (hc: c ∈ s) (ha: a ∉ s)
-(had: ∀ w ∈ (insert a s), w ≠ c → G.Adj b w) :
-    IsNClique G (n + 1) (insert a (insert b (erase s c))):= by
-  rw [insert_comm]
-  convert hs.insert_erase had (mem_insert_of_mem hc)
-  rw [erase_insert_of_ne]; rintro rfl; contradiction
 
 /-- If s is a clique in G ⊔ {xy} then s-{x} is a clique in G -/
 lemma IsNClique.erase_of_sup_edge_of_mem  {v w : α} (hc: (G ⊔ edge v w).IsNClique (n + 1) s)
@@ -725,13 +707,14 @@ section MaxCliqueFree
 variable {x y : α} {n : ℕ} {G}
 
 /-- A graph G is maximally Kᵣ-free if it doesn't contain Kᵣ but any supergraph does contain Kᵣ -/
-abbrev MaxCliqueFree (G : SimpleGraph α) (r : ℕ): Prop :=
-    G.CliqueFree r ∧ ∀ H, G < H → ¬ H.CliqueFree r
+abbrev MaxCliqueFree (G : SimpleGraph α) (r : ℕ) : Prop :=
+  Maximal (fun H => H.CliqueFree r) G
 
 /-- If we add a new edge to a maximally r-clique-free graph we get a clique -/
 protected lemma MaxCliqueFree.sup_edge (h: G.MaxCliqueFree n) (hne: x ≠ y) (hnadj: ¬G.Adj x y ):
     ∃ t, (G ⊔ edge x y).IsNClique n t:=by
-  convert h.2 _ <| G.lt_sup_edge hne hnadj
+  rw [MaxCliqueFree, maximal_iff_forall_gt] at h
+  convert h.2  <| G.lt_sup_edge hne hnadj
   simp [CliqueFree, not_forall, not_not]
 
 variable [DecidableEq α]

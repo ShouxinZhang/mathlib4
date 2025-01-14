@@ -73,7 +73,7 @@ theorem _root_.SimpleGraph.colorable_of_cliqueFree_minDegree_gt (hf: G.CliqueFre
   | zero => exact colorable_of_cliqueFree_one hf
   | succ r =>
   -- First swap G for an edge maximal Kᵣ₊₂-free graph H such that G ≤ H
-  obtain ⟨H,hmcfle,hmcf⟩:=exists_edge_maximal (fun H => H.CliqueFree (r + 2)) hf
+  obtain ⟨H,hmcfle,hmcf⟩:=exists_maximal_supergraph (fun H => H.CliqueFree (r + 2)) hf
   -- If we can (r + 1)-color H then we can (r + 1)-color G
   apply Colorable.mono_left hmcfle
   by_contra! hnotcol

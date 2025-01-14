@@ -25,9 +25,9 @@ r-sets s and t, and vertices v w₁ w₂ forming a P₂-complement.
 -/
 
 open Finset
-variable {α : Type*}[DecidableEq α]
+variable {α : Type*}{a b c d : α} {G : SimpleGraph α} {r : ℕ } {s : Finset α} [DecidableEq α]
 /-- Useful trivial fact about when |{a,b,c,d}| ≤ 2 given a ≠ b , a ≠ d, b ≠ c  -/
-private lemma card_le_two_of_four {a b c d : α} (hab : a ≠ b) (had : a ≠ d) (hbc : b ≠ c)
+private lemma card_le_two_of_four  (hab : a ≠ b) (had : a ≠ d) (hbc : b ≠ c)
 (hc2: #{a,b,c,d} ≤ 2): c = a ∧ d = b:=by
   by_contra! hf
   apply (#{a, b, c, d}).le_lt_asymm hc2 <| two_lt_card_iff.2 _
@@ -37,7 +37,26 @@ private lemma card_le_two_of_four {a b c d : α} (hab : a ≠ b) (had : a ≠ d)
   · exact ⟨a,b,c,Or.inl rfl,Or.inr <| Or.inl rfl,Or.inr <| Or.inr <| Or.inl rfl,hab,hac,hbc⟩
 
 namespace SimpleGraph
-variable (G : SimpleGraph α) {r : ℕ }
+lemma IsNClique.insert_insert (h1 : G.IsNClique r (insert a s))
+(h2 : G.IsNClique r (insert b s)) (h2' : b ∉ s) (hadj : G.Adj a b) :
+    G.IsNClique (r + 1) (insert b ((insert a) s)) := by
+  apply h1.insert
+  intro b hb
+  obtain (rfl | h):=mem_insert.1 hb
+  · exact hadj.symm
+  · apply h2.1
+    · simp
+    · simp [h]
+    · rintro rfl; contradiction
+
+lemma IsNClique.insert_insert_erase (hs: IsNClique G (r + 1) (insert a s)) (hc: c ∈ s) (ha: a ∉ s)
+(had: ∀ w ∈ (insert a s), w ≠ c → G.Adj b w) :
+    IsNClique G (r + 1) (insert a (insert b (erase s c))):= by
+  rw [insert_comm]
+  convert hs.insert_erase had (mem_insert_of_mem hc)
+  rw [erase_insert_of_ne]; rintro rfl; contradiction
+
+variable (G)
 /-- A IsWheel r structure in G is 3 vertices and two r-sets such that... -/
 structure IsWheel (r : ℕ) (v w₁ w₂ : α) (s t : Finset α) : Prop where
   IsP2Compl : G.IsP2Compl v w₁ w₂ -- w₁w₂ ∈ E(G) but vw₁,vw₂ ∉ E(G)

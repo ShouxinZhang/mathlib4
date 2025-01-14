@@ -7,6 +7,7 @@ import Mathlib.Algebra.Order.Ring.Defs
 import Mathlib.Combinatorics.SimpleGraph.Basic
 import Mathlib.Data.Finset.Max
 import Mathlib.Data.Sym.Card
+import Mathlib.Order.Minimal
 
 /-!
 # Definitions for finite and locally finite graphs
@@ -138,14 +139,16 @@ section finedges
 variable {G}
 /-- If `P G` holds and `G` has finitely many edges then there exists an edge minimal
 subgraph H of G for which `P H` holds. -/
-lemma exists_edge_minimal (P : SimpleGraph V → Prop) (hG : P G) [Fintype G.edgeSet] :
-    ∃ H, H ≤ G ∧ P H  ∧ ∀ {K}, K < H → ¬ P K :=by
+lemma exists_minimal_subgraph (P : SimpleGraph V → Prop) (hG : P G) [Fintype G.edgeSet] :
+    ∃ H, H ≤ G ∧ Minimal P H:=by
   let p : ℕ → Prop := fun n => ∃ H, ∃ _ : Fintype (H.edgeSet), H ≤ G ∧ P H ∧ H.edgeFinset.card ≤ n
   have h : p G.edgeFinset.card := by
     use G, inferInstance
   classical
   obtain ⟨H,_,hH⟩:=Nat.find_spec ⟨_,h⟩
-  use H, hH.1,hH.2.1
+  use H, hH.1
+  rw [minimal_iff_forall_lt]
+  use hH.2.1
   intro K hK
   have hFin : Fintype K.edgeSet :=
     Set.fintypeSubset G.edgeSet (edgeSet_subset_edgeSet.2 <| hK.le.trans hH.1)
@@ -161,8 +164,9 @@ lemma exists_edge_minimal (P : SimpleGraph V → Prop) (hG : P G) [Fintype G.edg
 variable [Fintype V]
 /--If V is finite and `P G` holds then there exists a maximal supergraph H of G
 for which `P H` holds. -/
-lemma exists_edge_maximal (P : SimpleGraph V → Prop) (hG : P G) :
-    ∃ H, G ≤ H ∧ P H  ∧ ∀ {K}, H < K → ¬ P K :=by
+lemma exists_maximal_supergraph (P : SimpleGraph V → Prop) (hG : P G) :
+    ∃ H, G ≤ H ∧ Maximal P H :=by
+  simp_rw [maximal_iff_forall_gt]
   classical
   revert hG
   apply WellFounded.recursion (measure fun H  => Hᶜ.edgeFinset.card).wf G
@@ -174,6 +178,25 @@ lemma exists_edge_maximal (P : SimpleGraph V → Prop) (hG : P G) :
     obtain ⟨e,hle,he⟩:= hc d ((fun h => Finset.card_lt_card <| edgeFinset_ssubset_edgeFinset.2
         <| compl_lt_compl_iff_lt.2 h) hd1) hd2
     use e, hd1.le.trans hle
+
+/--If V is finite and `P G` holds then there exists a maximal supergraph H of G
+for which `P H` holds. -/
+lemma exists_maximal (P : SimpleGraph V → Prop) (hG : P G) :
+    ∃ H, Maximal P H :=by
+  classical
+  revert hG
+  apply WellFounded.recursion (measure fun H  => Hᶜ.edgeFinset.card).wf G
+  intro c hc pc
+  by_cases hmax : Maximal P c
+  · use c
+  · unfold Maximal at hmax
+    push_neg at hmax
+    obtain ⟨d,hd1,hd2⟩:=hmax pc
+    obtain ⟨e,he,hle⟩:= hc d ((fun h => Finset.card_lt_card <| edgeFinset_ssubset_edgeFinset.2
+        <| compl_lt_compl_iff_lt.2 h) hd2) hd1
+    use e,he,hle
+
+
 end finedges
 section DeleteFar
 
