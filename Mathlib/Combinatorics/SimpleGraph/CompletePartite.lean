@@ -53,6 +53,8 @@ lemma equivalence  : Equivalence (¬G.Adj · · ):=by
   · intro _ _ h'; rwa [adj_comm] at h'
   · apply h
 
+
+/-- The setoid given by non-adjacency -/
 def setoid : Setoid α := ⟨_, h.equivalence⟩
 
 /-- The partition into independent sets -/
