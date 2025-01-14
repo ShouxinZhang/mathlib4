@@ -179,24 +179,6 @@ lemma exists_maximal_supergraph (P : SimpleGraph V → Prop) (hG : P G) :
         <| compl_lt_compl_iff_lt.2 h) hd1) hd2
     use e, hd1.le.trans hle
 
-/--If V is finite and `P G` holds then there exists a maximal supergraph H of G
-for which `P H` holds. -/
-lemma exists_maximal (P : SimpleGraph V → Prop) (hG : P G) :
-    ∃ H, Maximal P H :=by
-  classical
-  revert hG
-  apply WellFounded.recursion (measure fun H  => Hᶜ.edgeFinset.card).wf G
-  intro c hc pc
-  by_cases hmax : Maximal P c
-  · use c
-  · unfold Maximal at hmax
-    push_neg at hmax
-    obtain ⟨d,hd1,hd2⟩:=hmax pc
-    obtain ⟨e,he,hle⟩:= hc d ((fun h => Finset.card_lt_card <| edgeFinset_ssubset_edgeFinset.2
-        <| compl_lt_compl_iff_lt.2 h) hd2) hd1
-    use e,he,hle
-
-
 end finedges
 section DeleteFar
 
