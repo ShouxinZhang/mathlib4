@@ -4,8 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Yunzhou Xie, Jujian Zhang
 -/
 import Mathlib.Algebra.Module.Projective
-import Mathlib.RingTheory.TensorProduct.Basic
 import Mathlib.RingTheory.Finiteness.Defs
+import Mathlib.RingTheory.TensorProduct.Basic
 
 /-!
 # Azumaya Algebras
@@ -20,42 +20,39 @@ TODO : Add the three more definitions and prove they are equivalent:
 
 ## Reference
 
-* <https://en.wikipedia.org/wiki/Azumaya_algebra>
-* [Benson Farb , R. Keith Dennis, *Noncommutative Algebra*]
+* [Benson Farb , R. Keith Dennis, *Noncommutative Algebra*][bensonfarb1993]
 
 ## Tags
 
 Azumaya algebra, central simple algebra, noncommutative algebra
 -/
 
-variable (R A : Type*) [CommRing R] [Ring A] [Algebra R A]
+variable (R A : Type*) [CommSemiring R] [Semiring A] [Algebra R A]
 
 open TensorProduct MulOpposite
 
+noncomputable instance : Module (A ⊗[R] Aᵐᵒᵖ) A := TensorProduct.Algebra.module
+
+instance : IsScalarTower R (A ⊗[R] Aᵐᵒᵖ) A where
+  smul_assoc r aa' x := by
+    induction aa' using TensorProduct.induction_on with
+    | zero => simp
+    | tmul a a' => exact LinearMap.map_smul₂ _ _ _ _
+    | add aa' bb' h1 h2 => simp_all [add_smul]
+
 /-- The canonical map from `A ⊗[R] Aᵐᵒᵖ` to `Module.End R A` where
   `a ⊗ b` maps to `f : x ↦ a * x * b`-/
-noncomputable abbrev TensorProduct.Algebra.moduleAux' : (A ⊗[R] Aᵐᵒᵖ) →ₐ[R] Module.End R A :=
-  {
-    __ := TensorProduct.Algebra.moduleAux
-    map_one' := by simp [Algebra.TensorProduct.one_def, Algebra.moduleAux]
-    map_mul' := fun x y ↦ by
-      induction x using TensorProduct.induction_on with
-      | zero => simp
-      | tmul x1 x2 =>
-        induction y using TensorProduct.induction_on with
-        | zero => simp
-        | tmul y1 y2 =>
-          ext; simp [mul_assoc, Algebra.moduleAux_apply]
-        | add y1 y2 hy1 hy2 => simp_all [mul_add]
-      | add x1 x2 hx1 hx2 => simp_all [add_mul]
-    map_zero' := rfl
-    commutes' := fun r ↦ by
-      ext a
-      simp [Algebra.moduleAux_apply, Algebra.algebraMap_eq_smul_one,
-        Algebra.TensorProduct.one_def]
-  }
+noncomputable abbrev AlgHom.tensorMopToEnd : (A ⊗[R] Aᵐᵒᵖ) →ₐ[R] Module.End R A :=
+  Algebra.Module.toModuleEndAlgHom R A
+
+lemma AlgHom.tensorMopToEnd_apply (a : A) (b : Aᵐᵒᵖ) (x : A) :
+    AlgHom.tensorMopToEnd R A (a ⊗ₜ b) x = a * x * b.unop := by
+  simp only [tensorMopToEnd, Algebra.Module.toModuleEndAlgHom, coe_mk, Module.toModuleEnd_apply,
+    DistribMulAction.toLinearMap_apply]
+  change TensorProduct.Algebra.moduleAux _ _ = _
+  simp [TensorProduct.Algebra.moduleAux_apply, ← mul_assoc]
 
 /-- An azumaya algebra is a finitely generated, projective and faithful R-algebra where
-  `TensorProduct.Algebra.moduleAux` is an isomorphism. -/
+  `AlgHom.tensorMopToEnd` is an isomorphism. -/
 class IsAzumaya extends Module.Projective R A, FaithfulSMul R A, Module.Finite R A: Prop where
-    bij : Function.Bijective <| TensorProduct.Algebra.moduleAux' R A
+    bij : Function.Bijective <| AlgHom.tensorMopToEnd R A
