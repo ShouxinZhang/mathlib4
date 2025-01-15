@@ -5,7 +5,7 @@ Authors: Xavier Roblot
 -/
 import Mathlib.MeasureTheory.Group.GeometryOfNumbers
 import Mathlib.MeasureTheory.Measure.Lebesgue.VolumeOfBalls
-import Mathlib.NumberTheory.NumberField.CanonicalEmbedding.Basic
+import Mathlib.NumberTheory.NumberField.CanonicalEmbedding.PolarCoord
 import Mathlib.Analysis.SpecialFunctions.Gamma.BohrMollerup
 
 /-!
@@ -92,7 +92,7 @@ theorem one_le_convexBodyLTFactor : 1 ≤ convexBodyLTFactor K :=
 such that `‖x w‖ < f w` for all infinite places `w`. -/
 theorem convexBodyLT_volume :
     volume (convexBodyLT K f) = (convexBodyLTFactor K) * ∏ w, (f w) ^ (mult w) := by
-  calc
+ calc
     _ = (∏ x : {w // InfinitePlace.IsReal w}, ENNReal.ofReal (2 * (f x.val))) *
           ∏ x : {w // InfinitePlace.IsComplex w}, ENNReal.ofReal (f x.val) ^ 2 * NNReal.pi := by
       simp_rw [volume_eq_prod, prod_prod, volume_pi, pi_pi, Real.volume_ball, Complex.volume_ball]
