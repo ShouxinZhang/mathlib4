@@ -15,24 +15,20 @@ This file contains various additional properties of discrete subsets of topologi
 
 Given a topological space `X` together with a subset `s ⊆ X`, there are two distinct concepts of
 "discreteness" which may hold. These are:
-  (i) Every point of `s` is isolated (i.e., the subset topology induced on `s` is the discrete
-      topology).
- (ii) Every compact subset of `X` meets `s` only finitely often (i.e., the inclusion map `s → X`
-      tends to the cocompact filter along the cofinite filter on `s`).
 
-When `s` is closed, the two conditions are equivalent provided `X` is locally compact and T1,
-see `IsClosed.tendsto_coe_cofinite_iff`.
+1. Every point of `s` is isolated. In other words, the subset topology induced on `s` is the
+   discrete topology.
+
+2. Every compact subset of `X` meets `s` only finitely often. In other words, the inclusion map `s →
+   X` tends to the cocompact filter along the cofinite filter on `s`.
+
+When `s` is closed, the two conditions are equivalent provided `X` is locally compact and T1, see
+`IsClosed.tendsto_coe_cofinite_iff`.
 
 ### Main statements
 
  * `tendsto_cofinite_cocompact_iff`:
  * `IsClosed.tendsto_coe_cofinite_iff`:
-
-## Co-discrete open sets
-
-We define the filter `Filter.codiscreteWithin S`, which is the supremum of all `𝓝[S \ {x}] x`.
-This is the filter of all open codiscrete sets within S. We also define `Filter.codiscrete` as
-`Filter.codiscreteWithin univ`, which is the filter of all open codiscrete sets in the space.
 
 -/
 
@@ -78,6 +74,15 @@ lemma IsClosed.tendsto_coe_cofinite_iff [T1Space X] [WeaklyLocallyCompactSpace X
    fun _ ↦ hs.tendsto_coe_cofinite_of_discreteTopology inferInstance⟩
 
 end cofinite_cocompact
+
+
+/-!
+## Co-discrete open sets
+
+We define the filter `Filter.codiscreteWithin S`, which is the supremum of all `𝓝[S \ {x}] x`.
+This is the filter of all open codiscrete sets within S. We also define `Filter.codiscrete` as
+`Filter.codiscreteWithin univ`, which is the filter of all open codiscrete sets in the space.
+-/
 
 section codiscrete_filter
 
