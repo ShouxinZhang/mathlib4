@@ -1,9 +1,4 @@
-import Mathlib.Algebra.Azumaya.Defs
-import Mathlib.Algebra.Central.Matrix
-import Mathlib.LinearAlgebra.FiniteDimensional.Defs
-import Mathlib.LinearAlgebra.Matrix.ToLin
-import Mathlib.RingTheory.TwoSidedIdeal.Basic
-import Mathlib.RingTheory.SimpleRing.Matrix
+import Mathlib
 
 section
 
@@ -23,21 +18,79 @@ lemma IsSimpleRing.right_of_tensor (B C : Type*)
     [hbc : IsSimpleRing (B ⊗[K] C)] :
     IsSimpleRing C := sorry
 
+instance TensorProduct.simple (B C : Type*) [Ring B] [Ring C] [Algebra K C]
+  [Algebra K B] [IsSimpleRing B] [IsSimpleRing C] [Algebra.IsCentral K B]:
+  IsSimpleRing (B ⊗[K] C) := sorry
+
 lemma center_tensorProduct
     (B C : Type*) [Ring B] [Algebra K B] [Ring C] [Algebra K C] :
     Subalgebra.center K (B ⊗[K] C) =
       (Algebra.TensorProduct.map (Subalgebra.center K B).val
         (Subalgebra.center K C).val).range := by sorry
 
+lemma TensorProduct.flip_mk_injective {R M N : Type*} [CommRing R] [AddCommGroup M] [AddCommGroup N]
+    [Module R M] [Module R N] [NoZeroSMulDivisors R N] [Module.Flat R M] (a : N) (ha : a ≠ 0) :
+    Function.Injective ((TensorProduct.mk R M N).flip a) := by
+  intro x y e
+  -- simp only [LinearMap.flip_apply, mk_apply] at e
+  apply (TensorProduct.rid R M).symm.injective
+  apply Module.Flat.lTensor_preserves_injective_linearMap (M := M) (LinearMap.toSpanSingleton R N a)
+    (smul_left_injective R ha)
+  simpa using e
+
 lemma IsCentral.left_of_tensor (B C : Type*)
     [Ring B] [Ring C] [Nontrivial B] [Nontrivial C] [Algebra K C] [Algebra K B]
-    [hbc : Algebra.IsCentral K (B ⊗[K] C)] :
+    [FiniteDimensional K B] [hbc : Algebra.IsCentral K (B ⊗[K] C)] :
     Algebra.IsCentral K B := by
-  letI : Nontrivial (B ⊗[K] C) := sorry
+  letI : Nontrivial (B ⊗[K] C) := Module.FaithfullyFlat.lTensor_nontrivial _ _ _
   have h := (Subalgebra.equivOfEq (R := K) (A := B ⊗[K] C) _ _ <|
     hbc.center_eq_bot K (B ⊗[K] C)) |>.trans <| Algebra.botEquiv K (B ⊗[K] C)
-  rw [center_tensorProduct, Algebra.TensorProduct.map_range] at h
-  sorry
+  have : (Algebra.TensorProduct.includeLeft.comp (Subalgebra.center K B).val).range ≤
+    Subalgebra.center K (B ⊗[K] C) := fun x hx ↦ by
+    simp only [AlgHom.mem_range, AlgHom.coe_comp, Subalgebra.coe_val, Function.comp_apply,
+      Algebra.TensorProduct.includeLeft_apply, Subtype.exists, exists_prop] at hx
+    obtain ⟨b, hb0, hb⟩ := hx
+    rw [Subalgebra.mem_center_iff] at hb0 ⊢
+    intro bc
+    induction bc using TensorProduct.induction_on with
+    | zero => simp
+    | tmul b' c =>
+      subst hb
+      simp only [Algebra.TensorProduct.tmul_mul_tmul, mul_one, one_mul]
+      congr 1
+      exact hb0 b'
+    | add _ _ _ _ => simp_all [add_mul, mul_add]
+  have eq: (Algebra.TensorProduct.includeLeft.comp (Subalgebra.center K B).val).range =
+      (⊥ : Subalgebra K (B ⊗[K] C)) := by
+    refine le_antisymm ?_ <| OrderBot.bot_le _
+    rw [← hbc.center_eq_bot]; exact this
+  let f : Subalgebra.center K B →ₐ[K] ((Algebra.TensorProduct.includeLeft (R := K) (B := C)).comp
+    (Subalgebra.center K B).val).range := {
+      toFun := fun ⟨b, hb⟩ ↦ ⟨b ⊗ₜ 1, ⟨⟨b, hb⟩, rfl⟩⟩
+      map_one' := by simp; rfl
+      map_mul' := fun _ _ ↦ by ext : 1; simp
+      map_zero' := by ext; simp
+      map_add' := fun _ _ ↦ by ext; simp [add_tmul]
+      commutes' := fun _ ↦ rfl}
+  have f_surj : Function.Surjective f := fun ⟨bc, ⟨⟨b, hb⟩, h⟩⟩ ↦ ⟨⟨b, hb⟩, by
+    simp [f]
+    change _ ⊗ₜ _ = _ at h
+    simp only [RingHom.coe_coe, Subalgebra.coe_val] at h⊢
+    exact h⟩
+
+  have e : ((Algebra.TensorProduct.includeLeft (R := K) (B := C)).comp
+    (Subalgebra.center K B).val).range ≃ₐ[K] (Subalgebra.center K B) :=
+    (AlgEquiv.ofBijective f
+    ⟨fun ⟨b1, hb1⟩ ⟨b2, hb2⟩ h12 ↦ by
+      simp only [AlgHom.coe_mk, RingHom.coe_mk, MonoidHom.coe_mk, OneHom.coe_mk,
+        Subtype.mk.injEq, f] at h12
+      ext ; simp only [f]
+      exact TensorProduct.flip_mk_injective _ one_ne_zero h12,
+    f_surj⟩).symm
+  have e2 := Subalgebra.equivOfEq _ _ eq |>.trans <| Algebra.botEquiv K _
+  have ee: Subalgebra.center K B ≃ₐ[K] K := e.symm.trans e2
+  exact ⟨le_of_eq <| Subalgebra.eq_of_le_of_finrank_eq (OrderBot.bot_le _)
+    (by rw [ee.toLinearEquiv.finrank_eq, Subalgebra.finrank_bot, Module.finrank_self])|>.symm⟩
 
 lemma IsSimpleRing.ofAlgEquiv (A B : Type*) [Ring A] [Ring B] [Algebra K A] [Algebra K B]
     (e : A ≃ₐ[K] B) (hA : IsSimpleRing A) : IsSimpleRing B := sorry
@@ -103,7 +156,7 @@ lemma dim_eq (A : Type*) [Ring A] [Algebra K A] [Algebra.IsCentral K A] [IsSimpl
 
 noncomputable def equivEnd (A : Type*) [Ring A] [Algebra K A] [Algebra.IsCentral K A]
     [IsSimpleRing A]: A ⊗[K] Aᵐᵒᵖ ≃ₐ[K] Module.End K A :=
-  AlgEquiv.ofBijective (TensorProduct.Algebra.moduleAux' K A) <| sorry
+  AlgEquiv.ofBijective (AlgHom.tensorMopToEnd K A) <| sorry
   -- bijective_of_dim_eq_of_isCentralSimple _ _ _ _ <|
   --   dim_eq K A
 end
@@ -122,6 +175,7 @@ lemma Algebra.IsCentral_ofAlgEquiv (A B : Type*) [Ring A] [Ring B] [Algebra F A]
       exact fun x => by simpa using congr(e.symm $(hx (e x))))
     exact ⟨k, by apply_fun e.symm; rw [← hk]; simp [ofId_apply]⟩
 
+instance [IsSimpleRing A]: IsSimpleRing Aᵐᵒᵖ := sorry
 
 theorem IsAzumaya_iff_CentralSimple [Nontrivial A]: IsAzumaya F A ↔ FiniteDimensional F A ∧
     Algebra.IsCentral F A ∧ IsSimpleRing A :=
@@ -143,7 +197,8 @@ theorem IsAzumaya_iff_CentralSimple [Nontrivial A]: IsAzumaya F A ↔ FiniteDime
         rw [← Algebra.algebraMap_eq_smul_one, ← Algebra.algebraMap_eq_smul_one] at ha
         exact NoZeroSMulDivisors.algebraMap_injective _ _ ha
       fg_top := fin.1
-      bij := sorry
+      bij := bijective_of_dim_eq_of_isCentralSimple F _ _
+        (AlgHom.tensorMopToEnd F A) <| dim_eq F A
     }⟩
 
 end Field
