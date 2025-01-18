@@ -1,8 +1,191 @@
 import Mathlib
 
+section corner
+
+variable {R : Type*} (e : R)
+
+namespace Subsemigroup
+
+variable [Semigroup R]
+
+/-- The corner associated to an element `e` in a semigroup
+is the subsemigroup of all elements of the form `e * r * e`. -/
+def corner : Subsemigroup R where
+  carrier := Set.range (e * · * e)
+  mul_mem' := by rintro _ _ ⟨a, rfl⟩ ⟨b, rfl⟩; exact ⟨a * e * e * b, by simp_rw [mul_assoc]⟩
+
+variable {e} (idem : IsIdempotentElem e)
+include idem
+
+lemma mem_corner_iff {r : R} : r ∈ corner e ↔ e * r = r ∧ r * e = r :=
+  ⟨by rintro ⟨r, rfl⟩; simp_rw [← mul_assoc, idem.eq, mul_assoc, idem.eq, true_and],
+    (⟨r, by simp_rw [·]⟩)⟩
+
+lemma mem_corner_iff_mul_left (hc : IsMulCentral e) {r : R} : r ∈ corner e ↔ e * r = r := by
+  rw [mem_corner_iff idem, and_iff_left_of_imp]; intro; rwa [← hc.comm]
+
+lemma mem_corner_iff_mul_right (hc : IsMulCentral e) {r : R} : r ∈ corner e ↔ r * e = r := by
+  rw [mem_corner_iff_mul_left idem hc, hc.comm]
+
+lemma mem_corner_iff_mem_range_mul_left (hc : IsMulCentral e) {r : R} :
+    r ∈ corner e ↔ r ∈ Set.range (e * ·) := by
+  simp_rw [corner, mem_mk, Set.mem_range, ← hc.comm, ← mul_assoc, idem.eq]
+
+lemma mem_corner_iff_mem_range_mul_right (hc : IsMulCentral e) {r : R} :
+    r ∈ corner e ↔ r ∈ Set.range (· * e) := by
+  simp_rw [mem_corner_iff_mem_range_mul_left idem hc, hc.comm]
+
+/-- The corner associated to an idempotent `e` in a semiring without 1
+is the semiring with `e` as 1 consisting of all element of the form `e * r * e`. -/
+@[nolint unusedArguments]
+def _root_.IsIdempotentElem.Corner (_ : IsIdempotentElem e) : Type _ := Subsemigroup.corner e
+
+end Subsemigroup
+
+/-- The corner associated to an element `e` in a semiring without 1
+is the subsemiring without 1 of all elements of the form `e * r * e`. -/
+def NonUnitalSubsemiring.corner [NonUnitalSemiring R] : NonUnitalSubsemiring R where
+  __ := Subsemigroup.corner e
+  add_mem' := by rintro _ _ ⟨a, rfl⟩ ⟨b, rfl⟩; exact ⟨a + b, by simp_rw [mul_add, add_mul]⟩
+  zero_mem' := ⟨0, by simp_rw [mul_zero, zero_mul]⟩
+
+/-- The corner associated to an element `e` in a ring without `
+is the subring without 1 of all elements of the form `e * r * e`. -/
+def NonUnitalRing.corner [NonUnitalRing R] : NonUnitalSubring R where
+  __ := NonUnitalSubsemiring.corner e
+  neg_mem' := by rintro _ ⟨a, rfl⟩; exact ⟨-a, by simp_rw [mul_neg, neg_mul]⟩
+
+instance [NonUnitalSemiring R] (idem : IsIdempotentElem e) : Semiring idem.Corner where
+  __ : NonUnitalSemiring (NonUnitalSubsemiring.corner e) := inferInstance
+  one := ⟨e, e, by simp_rw [idem.eq]⟩
+  one_mul r := Subtype.ext ((Subsemigroup.mem_corner_iff idem).mp r.2).1
+  mul_one r := Subtype.ext ((Subsemigroup.mem_corner_iff idem).mp r.2).2
+
+instance [NonUnitalCommSemiring R] (idem : IsIdempotentElem e) : CommSemiring idem.Corner where
+  __ : NonUnitalCommSemiring (NonUnitalSubsemiring.corner e) := inferInstance
+  __ : Semiring idem.Corner := inferInstance
+
+instance [NonUnitalRing R] (idem : IsIdempotentElem e) : Ring idem.Corner where
+  __ : NonUnitalRing (NonUnitalRing.corner e) := inferInstance
+  __ : Semiring idem.Corner := inferInstance
+
+instance [NonUnitalCommRing R] (idem : IsIdempotentElem e) : CommRing idem.Corner where
+  __ : NonUnitalCommRing (NonUnitalRing.corner e) := inferInstance
+  __ : Semiring idem.Corner := inferInstance
+
+variable {I : Type*} [Fintype I] {e : I → R}
+
+/-- A complete orthogonal family of central idempotents in a semiring
+give rise to a direct product decomposition. -/
+def CompleteOrthogonalIdempotents.mulEquivOfIsMulCentral [Ring R]
+    (he : CompleteOrthogonalIdempotents e) (hc : ∀ i, IsMulCentral (e i)) :
+    R ≃+* Π i, (he.idem i).Corner where
+  toFun r i := ⟨_, r, rfl⟩
+  invFun r := ∑ i, (r i).1
+  left_inv r := by
+    simp_rw [(hc _).comm, mul_assoc, (he.idem _).eq, ← Finset.mul_sum, he.complete, mul_one]
+  right_inv r := funext fun i ↦ Subtype.ext <| by
+    simp_rw [Finset.mul_sum, Finset.sum_mul]
+    rw [Finset.sum_eq_single i _ (by simp at ·)]
+    · have ⟨r', eq⟩ := (r i).2
+      rw [← eq]; simp_rw [← mul_assoc, (he.idem i).eq, mul_assoc, (he.idem i).eq]
+    · intro j _ ne; have ⟨r', eq⟩ := (r j).2
+      rw [← eq]; simp_rw [← mul_assoc, he.ortho ne.symm, zero_mul]
+  map_mul' r₁ r₂ := funext fun i ↦ Subtype.ext <|
+    calc e i * (r₁ * r₂) * e i
+     _ = e i * (r₁ * e i * r₂) * e i := by simp_rw [← (hc i).comm r₁, ← mul_assoc, (he.idem i).eq]
+     _ = e i * r₁ * e i * (e i * r₂ * e i) := by
+      conv in (r₁ * _ * r₂) => rw [← (he.idem i).eq]
+      simp_rw [mul_assoc]
+  map_add' r₁ r₂ := funext fun i ↦ Subtype.ext <| by simpa [mul_add] using add_mul ..
+
+/-- A complete orthogonal family of idempotents in a commutative semiring
+give rise to a direct product decomposition. -/
+def CompleteOrthogonalIdempotents.mulEquivOfComm [CommRing R]
+    (he : CompleteOrthogonalIdempotents e) : R ≃+* Π i, (he.idem i).Corner :=
+  he.mulEquivOfIsMulCentral fun _ ↦ Semigroup.mem_center_iff.mpr fun _ ↦ mul_comm ..
+
+end corner
+
 section
 
 open TensorProduct
+
+section Morita
+
+universe u₁ u₂ u₃
+
+open CategoryTheory
+
+open Function MulOpposite Set
+open scoped Pointwise
+
+/--
+Two rings are Morita equivalent if their module categories are equivalent.
+-/
+structure IsMoritaEquivalent (R : Type u₁) [Ring R] (S : Type u₂) [Ring S] : Prop where
+  cond : Nonempty <| ModuleCat.{max u₁ u₂} R ≌ ModuleCat.{max u₁ u₂} S
+
+namespace IsMoritaEquivalent
+
+variable {R : Type u₁} [Ring R] {S : Type u₂} [Ring S] {T : Type u₃} [Ring T]
+
+lemma refl : IsMoritaEquivalent R R where
+  cond := ⟨.refl⟩
+
+lemma symm (h : IsMoritaEquivalent R S) : IsMoritaEquivalent S R where
+  cond := h.cond.map .symm
+
+theorem ofRingEquiv (e : R ≃+* S): IsMoritaEquivalent R S := sorry
+
+lemma morita_iff (e' : R): IsMoritaEquivalent R S ↔ ∃(n : ℕ),
+    ∃(e : R)(he : IsIdempotentElem e)(he' : Doset.doset e ⊤ ⊤ = ⊤),
+    Nonempty <| S ≃+* he.Corner := by
+  sorry
+
+end IsMoritaEquivalent
+
+end Morita
+
+section brauer
+
+universe u v
+
+variable (K : Type u) [Field K]
+
+structure CSA (K : Type u) [Field K] where
+  (carrier : Type v)
+  [ring : Ring carrier]
+  [algebra : Algebra K carrier]
+  [isCentral : Algebra.IsCentral K carrier]
+  [isSimple : IsSimpleRing carrier]
+  [fin_dim : FiniteDimensional K carrier]
+
+instance : CoeSort (CSA.{u, v} K) (Type v) where
+  coe A := A.carrier
+
+instance (A : CSA K) : Ring A := A.ring
+
+instance (A : CSA K) : Algebra K A := A.algebra
+
+instance (A : CSA K) : Algebra.IsCentral K A := A.isCentral
+
+instance (A : CSA K) : IsSimpleRing A := A.isSimple
+
+instance (A : CSA K) : FiniteDimensional K A := A.fin_dim
+
+variable {K : Type u} [Field K]
+
+structure BrauerEquivalence (A B : CSA K) where
+(n m : ℕ) [hn: NeZero n] [hm : NeZero m]
+(iso: Matrix (Fin n) (Fin n) A ≃ₐ[K] Matrix (Fin m) (Fin m) B)
+
+instance (A B : CSA K) (h : BrauerEquivalence A B) : NeZero h.n := h.hn
+instance (A B : CSA K) (h : BrauerEquivalence A B) : NeZero h.m := h.hm
+
+abbrev IsBrauerEquivalent (A B : CSA K) := Nonempty (BrauerEquivalence A B)
+
+end brauer
 
 universe u v
 
@@ -27,6 +210,41 @@ lemma center_tensorProduct
     Subalgebra.center K (B ⊗[K] C) =
       (Algebra.TensorProduct.map (Subalgebra.center K B).val
         (Subalgebra.center K C).val).range := by sorry
+
+lemma TwoSidedIdeal.comap_comap
+    {R S T : Type*} [Ring R] [Ring S] [Ring T]
+    (f : R →+* S) (g : S →+* T) (I : TwoSidedIdeal T) :
+  TwoSidedIdeal.comap f (TwoSidedIdeal.comap g I) = TwoSidedIdeal.comap (g.comp f) I := rfl
+
+open TwoSidedIdeal in
+@[simp]
+def TwoSidedIdeal.orderIsoOfRingEquiv {R R' : Type*} [Ring R] [Ring R']
+  {F : Type*} [EquivLike F R R'] [RingEquivClass F R R'] (f : F) :
+    TwoSidedIdeal R ≃o TwoSidedIdeal R' where
+  toFun := comap (RingEquivClass.toRingEquiv f).symm
+  invFun := comap (RingEquivClass.toRingEquiv f)
+  left_inv I := by
+    have :=
+      comap_comap (R := R) (S := R') (RingEquivClass.toRingEquiv f)
+      (RingEquivClass.toRingEquiv f).symm I
+    simp at this
+    erw [TwoSidedIdeal.comap_comap (RingEquivClass.toRingEquiv f).toRingHom
+      (RingEquivClass.toRingEquiv f).symm.toRingHom]
+    simp only [RingEquiv.toRingHom_eq_coe, RingEquiv.symm_comp]
+    rfl
+  right_inv := fun I => SetLike.ext <| fun x => by
+    simp only [mem_comap, RingEquiv.apply_symm_apply]
+  map_rel_iff' := by
+    intro I J
+    rw [le_iff, le_iff]
+    constructor
+    · rintro h x hx
+
+      specialize @h (RingEquivClass.toRingEquiv f x) (by simpa [TwoSidedIdeal.mem_comap])
+      simpa [TwoSidedIdeal.mem_comap] using h
+    · intro h x hx
+      simp only [Equiv.coe_fn_mk, SetLike.mem_coe, mem_comap] at hx ⊢
+      exact h hx
 
 lemma TensorProduct.flip_mk_injective {R M N : Type*} [CommRing R] [AddCommGroup M] [AddCommGroup N]
     [Module R M] [Module R N] [NoZeroSMulDivisors R N] [Module.Flat R M] (a : N) (ha : a ≠ 0) :
@@ -93,7 +311,8 @@ lemma IsCentral.left_of_tensor (B C : Type*)
     (by rw [ee.toLinearEquiv.finrank_eq, Subalgebra.finrank_bot, Module.finrank_self])|>.symm⟩
 
 lemma IsSimpleRing.ofAlgEquiv (A B : Type*) [Ring A] [Ring B] [Algebra K A] [Algebra K B]
-    (e : A ≃ₐ[K] B) (hA : IsSimpleRing A) : IsSimpleRing B := sorry
+    (e : A ≃ₐ[K] B) (hA : IsSimpleRing A) : IsSimpleRing B :=
+  ⟨OrderIso.isSimpleOrder_iff (TwoSidedIdeal.orderIsoOfRingEquiv e.toRingEquiv)|>.1 hA.1⟩
 
 lemma bijective_of_dim_eq_of_isCentralSimple
     (A B : Type*) [Ring A] [Ring B] [Algebra K A] [Algebra K B] [csa_source : IsSimpleRing A]
@@ -163,7 +382,7 @@ end
 
 section Field
 
-variable (F A : Type*) [Field F] [Ring A] [Algebra F A]
+variable (F A B : Type*) [Field F] [Ring A] [Ring B] [Algebra F A] [Algebra F B]
 
 open TensorProduct
 
@@ -200,5 +419,12 @@ theorem IsAzumaya_iff_CentralSimple [Nontrivial A]: IsAzumaya F A ↔ FiniteDime
       bij := bijective_of_dim_eq_of_isCentralSimple F _ _
         (AlgHom.tensorMopToEnd F A) <| dim_eq F A
     }⟩
+
+theorem Morita_iff_Brauer (A B : CSA F): IsMoritaEquivalent A B ↔ IsBrauerEquivalent A B :=
+  ⟨fun ⟨⟨e⟩⟩ ↦ by sorry,
+  fun ⟨hAB⟩ ↦ by
+    obtain ⟨n, m, e⟩ := hAB
+    -- obtain ⟨n1⟩ := WedderburnArtin
+    sorry⟩
 
 end Field
