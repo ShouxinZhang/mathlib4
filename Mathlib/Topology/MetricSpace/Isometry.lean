@@ -259,6 +259,18 @@ theorem Topology.IsEmbedding.to_isometry {α β} [TopologicalSpace α] [MetricSp
 @[deprecated (since := "2024-10-26")]
 alias Embedding.to_isometry := IsEmbedding.to_isometry
 
+theorem PseudoEMetricSpace.isometry_induced (f : α → β) [m : PseudoEMetricSpace β] :
+    letI := m.induced f; Isometry f := fun _ _ ↦ rfl
+
+theorem PsuedoMetricSpace.isometry_induced (f : α → β) [m : PseudoMetricSpace β] :
+    letI := m.induced f; Isometry f := fun _ _ ↦ rfl
+
+theorem EMetricSpace.isometry_induced (f : α → β) (hf : f.Injective) [m : EMetricSpace β] :
+    letI := m.induced f hf; Isometry f := fun _ _ ↦ rfl
+
+theorem MetricSpace.isometry_induced (f : α → β) (hf : f.Injective) [m : MetricSpace β] :
+    letI := m.induced f hf; Isometry f := fun _ _ ↦ rfl
+
 /-- `IsometryClass F α β` states that `F` is a type of isometries. -/
 class IsometryClass (F : Type*) (α β : outParam Type*)
     [PseudoEMetricSpace α] [PseudoEMetricSpace β] [FunLike F α β] : Prop where
