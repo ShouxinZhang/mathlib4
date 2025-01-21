@@ -1,112 +1,5 @@
 import Mathlib
 
-section corner
-
-variable {R : Type*} (e : R)
-
-namespace Subsemigroup
-
-variable [Semigroup R]
-
-/-- The corner associated to an element `e` in a semigroup
-is the subsemigroup of all elements of the form `e * r * e`. -/
-def corner : Subsemigroup R where
-  carrier := Set.range (e * · * e)
-  mul_mem' := by rintro _ _ ⟨a, rfl⟩ ⟨b, rfl⟩; exact ⟨a * e * e * b, by simp_rw [mul_assoc]⟩
-
-variable {e} (idem : IsIdempotentElem e)
-include idem
-
-lemma mem_corner_iff {r : R} : r ∈ corner e ↔ e * r = r ∧ r * e = r :=
-  ⟨by rintro ⟨r, rfl⟩; simp_rw [← mul_assoc, idem.eq, mul_assoc, idem.eq, true_and],
-    (⟨r, by simp_rw [·]⟩)⟩
-
-lemma mem_corner_iff_mul_left (hc : IsMulCentral e) {r : R} : r ∈ corner e ↔ e * r = r := by
-  rw [mem_corner_iff idem, and_iff_left_of_imp]; intro; rwa [← hc.comm]
-
-lemma mem_corner_iff_mul_right (hc : IsMulCentral e) {r : R} : r ∈ corner e ↔ r * e = r := by
-  rw [mem_corner_iff_mul_left idem hc, hc.comm]
-
-lemma mem_corner_iff_mem_range_mul_left (hc : IsMulCentral e) {r : R} :
-    r ∈ corner e ↔ r ∈ Set.range (e * ·) := by
-  simp_rw [corner, mem_mk, Set.mem_range, ← hc.comm, ← mul_assoc, idem.eq]
-
-lemma mem_corner_iff_mem_range_mul_right (hc : IsMulCentral e) {r : R} :
-    r ∈ corner e ↔ r ∈ Set.range (· * e) := by
-  simp_rw [mem_corner_iff_mem_range_mul_left idem hc, hc.comm]
-
-/-- The corner associated to an idempotent `e` in a semiring without 1
-is the semiring with `e` as 1 consisting of all element of the form `e * r * e`. -/
-@[nolint unusedArguments]
-def _root_.IsIdempotentElem.Corner (_ : IsIdempotentElem e) : Type _ := Subsemigroup.corner e
-
-end Subsemigroup
-
-/-- The corner associated to an element `e` in a semiring without 1
-is the subsemiring without 1 of all elements of the form `e * r * e`. -/
-def NonUnitalSubsemiring.corner [NonUnitalSemiring R] : NonUnitalSubsemiring R where
-  __ := Subsemigroup.corner e
-  add_mem' := by rintro _ _ ⟨a, rfl⟩ ⟨b, rfl⟩; exact ⟨a + b, by simp_rw [mul_add, add_mul]⟩
-  zero_mem' := ⟨0, by simp_rw [mul_zero, zero_mul]⟩
-
-/-- The corner associated to an element `e` in a ring without `
-is the subring without 1 of all elements of the form `e * r * e`. -/
-def NonUnitalRing.corner [NonUnitalRing R] : NonUnitalSubring R where
-  __ := NonUnitalSubsemiring.corner e
-  neg_mem' := by rintro _ ⟨a, rfl⟩; exact ⟨-a, by simp_rw [mul_neg, neg_mul]⟩
-
-instance [NonUnitalSemiring R] (idem : IsIdempotentElem e) : Semiring idem.Corner where
-  __ : NonUnitalSemiring (NonUnitalSubsemiring.corner e) := inferInstance
-  one := ⟨e, e, by simp_rw [idem.eq]⟩
-  one_mul r := Subtype.ext ((Subsemigroup.mem_corner_iff idem).mp r.2).1
-  mul_one r := Subtype.ext ((Subsemigroup.mem_corner_iff idem).mp r.2).2
-
-instance [NonUnitalCommSemiring R] (idem : IsIdempotentElem e) : CommSemiring idem.Corner where
-  __ : NonUnitalCommSemiring (NonUnitalSubsemiring.corner e) := inferInstance
-  __ : Semiring idem.Corner := inferInstance
-
-instance [NonUnitalRing R] (idem : IsIdempotentElem e) : Ring idem.Corner where
-  __ : NonUnitalRing (NonUnitalRing.corner e) := inferInstance
-  __ : Semiring idem.Corner := inferInstance
-
-instance [NonUnitalCommRing R] (idem : IsIdempotentElem e) : CommRing idem.Corner where
-  __ : NonUnitalCommRing (NonUnitalRing.corner e) := inferInstance
-  __ : Semiring idem.Corner := inferInstance
-
-variable {I : Type*} [Fintype I] {e : I → R}
-
-/-- A complete orthogonal family of central idempotents in a semiring
-give rise to a direct product decomposition. -/
-def CompleteOrthogonalIdempotents.mulEquivOfIsMulCentral [Ring R]
-    (he : CompleteOrthogonalIdempotents e) (hc : ∀ i, IsMulCentral (e i)) :
-    R ≃+* Π i, (he.idem i).Corner where
-  toFun r i := ⟨_, r, rfl⟩
-  invFun r := ∑ i, (r i).1
-  left_inv r := by
-    simp_rw [(hc _).comm, mul_assoc, (he.idem _).eq, ← Finset.mul_sum, he.complete, mul_one]
-  right_inv r := funext fun i ↦ Subtype.ext <| by
-    simp_rw [Finset.mul_sum, Finset.sum_mul]
-    rw [Finset.sum_eq_single i _ (by simp at ·)]
-    · have ⟨r', eq⟩ := (r i).2
-      rw [← eq]; simp_rw [← mul_assoc, (he.idem i).eq, mul_assoc, (he.idem i).eq]
-    · intro j _ ne; have ⟨r', eq⟩ := (r j).2
-      rw [← eq]; simp_rw [← mul_assoc, he.ortho ne.symm, zero_mul]
-  map_mul' r₁ r₂ := funext fun i ↦ Subtype.ext <|
-    calc e i * (r₁ * r₂) * e i
-     _ = e i * (r₁ * e i * r₂) * e i := by simp_rw [← (hc i).comm r₁, ← mul_assoc, (he.idem i).eq]
-     _ = e i * r₁ * e i * (e i * r₂ * e i) := by
-      conv in (r₁ * _ * r₂) => rw [← (he.idem i).eq]
-      simp_rw [mul_assoc]
-  map_add' r₁ r₂ := funext fun i ↦ Subtype.ext <| by simpa [mul_add] using add_mul ..
-
-/-- A complete orthogonal family of idempotents in a commutative semiring
-give rise to a direct product decomposition. -/
-def CompleteOrthogonalIdempotents.mulEquivOfComm [CommRing R]
-    (he : CompleteOrthogonalIdempotents e) : R ≃+* Π i, (he.idem i).Corner :=
-  he.mulEquivOfIsMulCentral fun _ ↦ Semigroup.mem_center_iff.mpr fun _ ↦ mul_comm ..
-
-end corner
-
 section
 
 open TensorProduct
@@ -382,7 +275,9 @@ end
 
 section Field
 
-variable (F A B : Type*) [Field F] [Ring A] [Ring B] [Algebra F A] [Algebra F B]
+universe u v
+
+variable (F : Type u) [Field F] (A B : Type v) [Ring A] [Ring B] [Algebra F A] [Algebra F B]
 
 open TensorProduct
 
@@ -420,11 +315,55 @@ theorem IsAzumaya_iff_CentralSimple [Nontrivial A]: IsAzumaya F A ↔ FiniteDime
         (AlgHom.tensorMopToEnd F A) <| dim_eq F A
     }⟩
 
-theorem Morita_iff_Brauer (A B : CSA F): IsMoritaEquivalent A B ↔ IsBrauerEquivalent A B :=
-  ⟨fun ⟨⟨e⟩⟩ ↦ by sorry,
+lemma Wedderburn_Artin_algebra_version
+    (K : Type u) [Field K] (B : Type v) [Ring B] [sim : IsSimpleRing B] [Algebra K B]:
+    ∃ (n : ℕ) (_ : NeZero n) (S : Type*) (_ : DivisionRing S) (_ : Algebra K S),
+    Nonempty (B ≃ₐ[K] (Matrix (Fin n) (Fin n) S)) := by sorry
+
+lemma Wedderburn_Artin_uniqueness₀
+    (k : Type u) [Field k] [Ring A] [Algebra k A] (n n' : ℕ) [NeZero n] [NeZero n']
+    (D : Type v) [DivisionRing D] [Algebra k D] (wdb : A ≃ₐ[k] Matrix (Fin n) (Fin n) D)
+    (D' : Type v) [DivisionRing D'] [Algebra k D'] (wdb' : A ≃ₐ[k] Matrix (Fin n') (Fin n') D') :
+    Nonempty $ D ≃ₐ[k] D' := by sorry
+
+def matrix_eqv' (K : Type u) [Field K] (n m : ℕ) (A : Type*) [Ring A] [Algebra K A] :
+    (Matrix (Fin n × Fin m) (Fin n × Fin m) A) ≃ₐ[K] Matrix (Fin (n * m)) (Fin (n * m)) A :=
+{ Matrix.reindexLinearEquiv K A finProdFinEquiv finProdFinEquiv with
+  toFun := Matrix.reindex finProdFinEquiv finProdFinEquiv
+  map_mul' := fun m n ↦ by simp only [Matrix.reindex_apply, Matrix.submatrix_mul_equiv]
+  commutes' := fun k ↦ by
+    ext i j
+    simp only [Matrix.reindex_apply, Matrix.submatrix_apply, finProdFinEquiv_symm_apply,
+      Matrix.algebraMap_matrix_apply, Prod.mk.injEq]
+    if h : i = j then aesop
+    else
+    simp only [h, ↓reduceIte, ite_eq_right_iff, and_imp]
+    intro h1 h2
+    have : i = j := by
+      have : (⟨i.divNat, i.modNat⟩ : Fin n × Fin m) = ⟨j.divNat, j.modNat⟩ := Prod.ext h1 h2
+      apply_fun finProdFinEquiv at this
+      rw [show ⟨i.divNat, i.modNat⟩ = finProdFinEquiv.symm i by rfl,
+        show ⟨j.divNat, _⟩ = finProdFinEquiv.symm j by rfl,
+        finProdFinEquiv.apply_symm_apply, finProdFinEquiv.apply_symm_apply] at this
+      exact this
+    tauto}
+
+theorem Morita_iff_Brauer (A B : CSA F):
+    IsMoritaEquivalent A B ↔ IsBrauerEquivalent A B :=
+  ⟨fun ⟨⟨e⟩⟩ ↦ by
+    -- need D-mod ≃ D'-mod ↔ D ≃ₐ[F] D' for D and D' division ring
+    sorry,
   fun ⟨hAB⟩ ↦ by
-    obtain ⟨n, m, e⟩ := hAB
-    -- obtain ⟨n1⟩ := WedderburnArtin
+    obtain ⟨n, m, e0⟩ := hAB
+    obtain ⟨n1, _, D, hD1, hD2, ⟨e⟩⟩ := Wedderburn_Artin_algebra_version.{u, u_1, v} F A
+    obtain ⟨m1, _, D', hD1', hD2', ⟨e'⟩⟩ := Wedderburn_Artin_algebra_version.{u, u_2, v} F B
+    letI : Algebra F D := hD2
+    have := matrix_eqv' _ _ _ _ |>.symm.trans <| Matrix.compAlgEquiv _ _ _ _ |>.symm.trans <|
+      e.symm.mapMatrix.trans e0|>.trans e'.mapMatrix|>.trans <| Matrix.compAlgEquiv _ _ D' F
+      |>.trans <| matrix_eqv' _ _ _ _
+    obtain ⟨ee⟩ := Wedderburn_Artin_uniqueness₀ (Matrix (Fin (n*n1)) (Fin (n*n1)) D) F _ _ D
+      AlgEquiv.refl D' this
+    -- need R-mod ≃ Mₙ(R)-mod then A-mod ≃ B-mod
     sorry⟩
 
 end Field
