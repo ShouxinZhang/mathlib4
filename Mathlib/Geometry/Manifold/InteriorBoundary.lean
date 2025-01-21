@@ -30,6 +30,13 @@ of `M` and `N`.
 - `ModelWithCorners.boundary_prod`: the boundary of `M × N` is `∂M × N ∪ (M × ∂N)`.
 - `ModelWithCorners.BoundarylessManifold.prod`: if `M` and `N` are boundaryless, so is `M × N`
 
+- `ModelWithCorners.interior_disjointUnion`: the interior of a disjoint union `M ⊔ M'`
+  is the union of the interior of `M` and `M'`
+- `ModelWithCorners.boundary_disjointUnion`: the boundary of a disjoint union `M ⊔ M'`
+  is the union of the boundaries of `M` and `M'`
+- `ModelWithCorners.boundaryless_disjointUnion`: if `M` and `M'` are boundaryless,
+  so is their disjoint union `M ⊔ M'`
+
 ## Tags
 manifold, interior, boundary
 
@@ -87,7 +94,7 @@ lemma isBoundaryPoint_iff {x : M} : I.IsBoundaryPoint x ↔ extChartAt I x x ∈
 lemma isInteriorPoint_or_isBoundaryPoint (x : M) : I.IsInteriorPoint x ∨ I.IsBoundaryPoint x := by
   rw [IsInteriorPoint, or_iff_not_imp_left, I.isBoundaryPoint_iff, ← closure_diff_interior,
     I.isClosed_range.closure_eq, mem_diff]
-  exact fun h => ⟨mem_range_self _, h⟩
+  exact fun h ↦ ⟨mem_range_self _, h⟩
 
 /-- A manifold decomposes into interior and boundary. -/
 lemma interior_union_boundary_eq_univ : (I.interior M) ∪ (I.boundary M) = (univ : Set M) :=
@@ -99,13 +106,22 @@ lemma disjoint_interior_boundary : Disjoint (I.interior M) (I.boundary M) := by
   -- Choose some x in the intersection of interior and boundary.
   obtain ⟨x, h1, h2⟩ := not_disjoint_iff.mp h
   rw [← mem_empty_iff_false (extChartAt I x x),
-    ← disjoint_iff_inter_eq_empty.mp (disjoint_interior_frontier (s := range I)), mem_inter_iff]
+    ← disjoint_iff_inter_eq_empty.mp disjoint_interior_frontier, mem_inter_iff]
   exact ⟨h1, h2⟩
+
+lemma isInteriorPoint_iff_not_isBoundaryPoint (x : M) :
+    I.IsInteriorPoint x ↔ ¬I.IsBoundaryPoint x := by
+  refine ⟨?_,
+    by simpa only [or_iff_not_imp_right] using isInteriorPoint_or_isBoundaryPoint x (I := I)⟩
+  by_contra! h
+  rw [← mem_empty_iff_false (extChartAt I x x),
+    ← disjoint_iff_inter_eq_empty.mp disjoint_interior_frontier, mem_inter_iff]
+  exact h
 
 /-- The boundary is the complement of the interior. -/
 lemma compl_interior : (I.interior M)ᶜ = I.boundary M:= by
   apply compl_unique ?_ I.interior_union_boundary_eq_univ
-  exact disjoint_iff_inter_eq_empty.mp (I.disjoint_interior_boundary)
+  exact disjoint_iff_inter_eq_empty.mp I.disjoint_interior_boundary
 
 /-- The interior is the complement of the boundary. -/
 lemma compl_boundary : (I.boundary M)ᶜ = I.interior M:= by
