@@ -93,7 +93,7 @@ def nonZeroDivisors (R : Type*) [MonoidWithZero R] : Submonoid R where
     rw [← mul_assoc] at hz
     exact hx₁ _ (hx₂ _ hz)
 
-/-- The notation for the submonoid of non-zerodivisors. -/
+/-- The notation for the submonoid of non-zero divisors. -/
 scoped[nonZeroDivisors] notation:9000 R "⁰" => nonZeroDivisors R
 
 /-- Let `R` be a monoid with zero and `M` an additive monoid with an `R`-action, then the collection
@@ -193,14 +193,14 @@ lemma nonZeroDivisors_le_comap_nonZeroDivisors_of_injective [NoZeroDivisors M₀
   Submonoid.le_comap_of_map_le _ (map_le_nonZeroDivisors_of_injective _ hf le_rfl)
 
 /-- If an element maps to a non-zero-divisor via injective homomorphism,
-then it is non-zero-divisor. -/
-theorem mem_nonZeroDivisor_of_injective [MonoidWithZeroHomClass F M M'] {f : F}
-    (hf : Function.Injective f) {a : M} (ha : f a ∈ M'⁰) : a ∈ M⁰ :=
+then it is a non-zero-divisor. -/
+theorem mem_nonZeroDivisor_of_injective [MonoidWithZeroHomClass F M₀ M₀'] {f : F}
+    (hf : Function.Injective f) {a : M₀} (ha : f a ∈ M₀'⁰) : a ∈ M₀⁰ :=
   fun x hx ↦ hf <| map_zero f ▸ ha (f x) (map_mul f x a ▸ map_zero f ▸ congrArg f hx)
 
-theorem comap_nonZeroDivisor_le_of_injective [MonoidWithZeroHomClass F M M'] {f : F}
-    (hf : Function.Injective f) : M'⁰.comap f ≤ M⁰ :=
-  fun _ ha ↦ mem_nonZeroDivisor_of_injective hf (Submonoid.mem_comap.mp ha
+theorem comap_nonZeroDivisor_le_of_injective [MonoidWithZeroHomClass F M₀ M₀'] {f : F}
+    (hf : Function.Injective f) : M₀'⁰.comap f ≤ M₀⁰ :=
+  fun _ ha ↦ mem_nonZeroDivisor_of_injective hf (Submonoid.mem_comap.mp ha)
 
 end MonoidWithZero
 
