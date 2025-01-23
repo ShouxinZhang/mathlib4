@@ -118,39 +118,34 @@ theorem ofReal_variance [IsFiniteMeasure μ] (hX : Memℒp X 2 μ) :
 
 protected alias _root_.MeasureTheory.Memℒp.evariance_lt_top := evariance_lt_top
 protected alias _root_.MeasureTheory.Memℒp.evariance_ne_top := evariance_ne_top
-protected alias _root_.MeasureTheory.Memℒp.ofReal_variance := ofReal_variance
+protected alias _root_.MeasureTheory.Memℒp.ofReal_variance_eq := ofReal_variance
 
 variable (X μ) in
 theorem evariance_eq_lintegral_ofReal :
     evariance X μ = ∫⁻ ω, ENNReal.ofReal ((X ω - μ[X]) ^ 2) ∂μ := by
-  simp [evariance, ENNReal.ofReal_pow, ofReal_norm_eq_enorm, ← enorm_eq_nnnorm]
+  simp [evariance, ← enorm_pow, Real.enorm_of_nonneg (sq_nonneg _)]
 
-private lemma variance_of_memℒp_aux (hX : Memℒp X 2 μ) (hμ : IsFiniteMeasure μ ∨ μ[X] = 0) :
-    variance X μ = μ[fun ω ↦ (X ω - μ[X]) ^ 2] := by
-  rw [variance, evariance_eq_lintegral_ofReal, ← ofReal_integral_eq_lintegral_ofReal,
-    ENNReal.toReal_ofReal (by positivity)]
-  · obtain hμ | hμ := hμ
-    · simpa using (hX.sub <| memℒp_const μ[X]).integrable_norm_pow two_ne_zero
-    · simpa [hμ] using hX.integrable_norm_pow two_ne_zero
-  · exact ae_of_all _ fun ω => pow_two_nonneg _
+lemma variance_eq_integral (hX : AEMeasurable X μ) : Var[X ; μ] = ∫ ω, (X ω - μ[X]) ^ 2 ∂μ := by
+  simp [variance, evariance, toReal_enorm, ← integral_toReal ((hX.sub_const _).enorm.pow_const _) <|
+    .of_forall fun _ ↦ ENNReal.pow_lt_top enorm_lt_top _]
 
-theorem _root_.MeasureTheory.Memℒp.variance_eq_of_integral_eq_zero (hX : Memℒp X 2 μ)
-    (hXint : μ[X] = 0) : variance X μ == ∫ ω, ‖X ω‖ ^ 2 ∂μ := by
-  simp [variance_of_memℒp_aux hX <| .inr hXint, hXint]
+lemma variance_of_integral_eq_zero (hX : AEMeasurable X μ) (hXint : μ[X] = 0) :
+    variance X μ = ∫ ω, X ω ^ 2 ∂μ := by
+  simp [variance_eq_integral hX, hXint]
 
-theorem _root_.MeasureTheory.Memℒp.variance_eq [IsFiniteMeasure μ] (hX : Memℒp X 2 μ) :
-    variance X μ = ∫ ω, ‖X ω - μ[X]‖ ^ 2 ∂μ := variance_of_memℒp_aux hX <| .inl ‹_›
+@[deprecated (since := "2025-01-23")]
+alias _root_.MeasureTheory.Memℒp.variance_eq := variance_eq_integral
+
+@[deprecated (since := "2025-01-23")]
+alias _root_.MeasureTheory.Memℒp.variance_eq_of_integral_eq_zero := variance_of_integral_eq_zero
 
 @[simp]
 theorem evariance_zero : evariance 0 μ = 0 := by simp [evariance]
 
 theorem evariance_eq_zero_iff (hX : AEMeasurable X μ) :
     evariance X μ = 0 ↔ X =ᵐ[μ] fun _ => μ[X] := by
-  rw [evariance, lintegral_eq_zero_iff']
-  constructor <;> intro hX <;> filter_upwards [hX] with ω hω
-  · simpa [sub_eq_zero] using hω
-  · simp [hω]
-  · exact (hX.sub_const _).enorm.pow_const _ -- TODO `measurability` and `fun_prop` fail
+  simp [evariance, lintegral_eq_zero_iff' ((hX.sub_const _).enorm.pow_const _), EventuallyEq,
+    sub_eq_zero]
 
 theorem evariance_mul (c : ℝ) (X : Ω → ℝ) (μ : Measure Ω) :
     evariance (fun ω => c * X ω) μ = ENNReal.ofReal (c ^ 2) * evariance X μ := by
@@ -183,7 +178,8 @@ theorem variance_smul' {A : Type*} [CommSemiring A] [Algebra A ℝ] (c : A) (X :
 
 theorem variance_def' [IsProbabilityMeasure μ] {X : Ω → ℝ} (hX : Memℒp X 2 μ) :
     variance X μ = μ[X ^ 2] - μ[X] ^ 2 := by
-  rw [hX.variance_eq, sub_sq', integral_sub', integral_add']; rotate_left
+  simp only [variance_eq_integral hX.aestronglyMeasurable.aemeasurable, sub_sq']
+  rw [integral_sub, integral_add]; rotate_left
   · exact hX.integrable_sq
   · apply integrable_const
   · apply hX.integrable_sq.add
@@ -217,7 +213,7 @@ theorem variance_le_expectation_sq [IsProbabilityMeasure μ] {X : Ω → ℝ}
 theorem evariance_def' [IsProbabilityMeasure μ] {X : Ω → ℝ} (hX : AEStronglyMeasurable X μ) :
     evariance X μ = (∫⁻ ω, ‖X ω‖ₑ ^ 2 ∂μ) - ENNReal.ofReal (μ[X] ^ 2) := by
   by_cases hℒ : Memℒp X 2 μ
-  · rw [← hℒ.ofReal_variance_eq, variance_def' hℒ, ENNReal.ofReal_sub _ (sq_nonneg _)]
+  · rw [← ofReal_variance hℒ, variance_def' hℒ, ENNReal.ofReal_sub _ (sq_nonneg _)]
     congr
     simp_rw [← enorm_pow, enorm]
     rw [lintegral_coe_eq_integral]
